@@ -11,20 +11,22 @@ Grunt is configured using a Yeoman configuration called [Generator Web App](http
 
 * Grunt (run `npm install -g grunt-cli`)
 
+* Bower (run `npm install -g bower`)
 
-## Useful Commands
+
+## Getting Started
 
     # Install libraries and dependencies (only need to do this once)
     npm install && bower install
+
+    # Create a BLANK AWS credentials file in the root directory
+    echo '{"key": "","secret": "","bucket": ""}' >> aws.json
 
     # Run app on local web server for development
     grunt serve
 
     # Build app and deploy to S3 (requires aws.json file with proper credentials)
     grunt build
-
-    # Git revert local changes
-    git reset --hard
 
 
 ## Getting Started
