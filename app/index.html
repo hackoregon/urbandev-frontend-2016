@@ -1,0 +1,132 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>PlotPDX Prototype</title>
+    <meta name="description" content="">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <base href="/"> 
+    <link href='https://fonts.googleapis.com/css?family=Dosis:400,300,500|Roboto+Slab:400,700,300' rel="stylesheet" type="text/css">
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    
+    <link rel="stylesheet" href="styles/select2.min.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <!-- endbuild -->
+  </head>
+  <body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <header class="main-header">
+      <div class="main-header-wrap">
+          <a href="index.html">
+              <div class="logo-wrap">
+                  <span class="plot-logo">
+                      <img src="images/plotpdx-logo.svg">
+                  </span>
+                  <div class="title-text">Plot<span class="title-text-bold">PDX</span></div>
+              </div>
+          </a>
+          <nav class="main-nav pull-right">
+              <a class="nav-item" href="#">Data</a>
+              <a class="nav-item" href="#">Team</a>
+              <a class="nav-item" href="#">Share</a>
+          </nav>
+      </div>
+    </header>
+    <div id="neighborhood-hover">None</div>
+    <div id="map"></div>
+    <div id="sidebar">
+        <div class="sidebar-header">
+           <!-- <div class="summary-container">
+                <div id="neighborhood-summary">23</div>
+                <div class="summary-label">Total Neighborhoods</div>
+            </div>
+            -->
+            <div class="hack-oregon-logo">
+                <img src="images/hack-oregon-logo.png">
+            </div>
+            <h1 class="sidebar-header-title">Explore a Neighborhood</h1>
+            <label for="neighborhood-dropdown"></label>
+            <select id="neighborhood-dropdown"></select>
+        </div>
+        <div class="sidebar-body">
+            <div class="data-section">
+                <a class="pull-right show-hide" href="#">Hide</a>
+                <h2 class="data-section-heading">Demographics Data</h2>
+                <div class="data-body">
+                    <div id="graph-radar"
+                         style="height: 300px; margin: 0 auto; margin-top:40px;"></div>
+                </div>
+            </div>
+            <div class="data-section">
+                <a class="pull-right show-hide" href="#">Hide</a>
+                <h2 class="data-section-heading">Home Values</h2>
+                <div class="data-body">
+                    <div id="graph-home-value"
+                         style="height: 300px; margin: 0 auto; margin-top:40px;"></div>
+                    <!--<div id="graph-zri" style="min-width: 310px; height: 300px; margin: 0 auto; margin-top:40px;"></div>-->
+                </div>
+            </div>
+            <div class="data-section">
+                <a class="pull-right show-hide" href="#">Hide</a>
+                <h2 class="data-section-heading">Ethnicity</h2>
+                <div class="data-body">
+                    <div id="graph-ethnicity"
+                         style="height:300px; margin: 0 auto; margin-top:0;"></div>
+                </div>
+            </div>
+            <div class="data-section">
+                <a class="pull-right show-hide" href="#">Hide</a>
+                <h2 class="data-section-heading">Crime</h2>
+                <div class="data-body">
+                    <div id="graph-crime"
+                         style="min-width: 490px; height:300px; margin: 0 auto; margin-top:0px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+       ga('create', 'UA-XXXXXX-10');
+       ga('send', 'pageview');
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArYK7KwuH-UdHv2SW_M-P7IzN0ThqGBE0&libraries=visualization"></script>
+    <!-- Backup Key: AIzaSyAUfNZJ6VK1S3HroCxIcgufeG68M8aUmvw -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+
+    <!-- build:js(.) scripts/oldieshim.js -->
+    <!--[if lt IE 9]>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/json3/lib/json3.js"></script>
+    <![endif]-->
+    <!-- endbuild -->
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/infobox.js"></script>
+    <script src="scripts/select2.min.js"></script>
+    <script src="scripts/neighborhoods.js"></script>
+    <script src="scripts/main.js"></script>
+    <script src="scripts/modal.js"></script>
+    <!-- endbuild -->
+</body>
+</html>

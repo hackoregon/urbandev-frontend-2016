@@ -1,0 +1,593 @@
+var neighborhoods = {
+  map: null,
+  data: null,
+  elems : {
+    map : $("#map"),
+    sidebar : $("#sidebar"),
+    neighborhoodDropdown : $("#neighborhood-dropdown"),
+    neighborhoodHover : $("#neighborhood-hover"),
+    neighborhoodSummary : $("#neighborhood-summary")
+  },
+  geoJSONPath : "/data/neighborhoods.json",  // geojson shapefiles (from zillow)
+  neighborhoodsArray : [],
+  neighborhoodsObject : {},
+  googleMapParams : {
+    zoom: 11,
+    panControl: true,
+    zoomControl: true,
+    center: new google.maps.LatLng(45.52306220000001,-122.67648159999999),
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    styles: [{"featureType":"all","elementType":"all","stylers":[{"lightness":"29"},{"invert_lightness":true},{"hue":"#008fff"},{"saturation":"-73"}]},{"featureType":"all","elementType":"labels","stylers":[{"saturation":"-72"}]},{"featureType":"administrative","elementType":"all","stylers":[{"lightness":"32"},{"weight":"0.42"},{"saturation":"0"}]},{"featureType":"administrative","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":"64"},{"saturation":"-45"},{"weight":"1.02"}]},{"featureType":"landscape","elementType":"all","stylers":[{"lightness":"-95"},{"gamma":"1.13"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"hue":"#006dff"},{"lightness":"4"},{"gamma":"1.44"},{"saturation":"-67"}]},{"featureType":"landscape","elementType":"geometry.stroke","stylers":[{"lightness":"5"}]},{"featureType":"landscape","elementType":"labels.text.fill","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"labels.text.fill","stylers":[{"weight":"0.84"},{"gamma":"0.5"}]},{"featureType":"poi","elementType":"labels.text.stroke","stylers":[{"visibility":"off"},{"weight":"0.79"},{"gamma":"0.5"}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"simplified"},{"lightness":"-78"},{"saturation":"-91"},{"color":"#1e1e1e"}]},{"featureType":"road","elementType":"labels.text","stylers":[{"color":"#ffffff"},{"lightness":"-49"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"lightness":"5"},{"color":"#bdb325"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"lightness":"10"},{"gamma":"1"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"lightness":"10"},{"saturation":"-100"}]},{"featureType":"transit","elementType":"all","stylers":[{"lightness":"-35"}]},{"featureType":"transit","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"saturation":"-97"},{"lightness":"-14"},{"color":"#000000"}]}],
+    disableDefaultUI: true
+  },
+  hoverStyle:{   
+    strokeColor: "#FFFFFF",  
+    fillOpacity: 0.6, 
+    strokeWeight: 2,
+    zIndex: 4
+  },
+  disabledStyle : {    
+    strokeWeight: 1,
+    strokeColor: "#979797",
+    fillOpacity: 0.15, 
+    fillColor: "#FFFFFF",
+    zIndex: 2
+  },
+  selectedStyle : {    
+    strokeWeight: 2,
+    strokeColor: "#51A1e3",
+    fillOpacity: 0.0, 
+    fillColor: "#FFFFFF",
+    zIndex: 5
+  },
+  blockgroupStyle : {    
+    strokeWeight: 0.5,
+    fillOpacity: 0.9, 
+    fillColor: "red",
+    zIndex: 1
+  } 
+};
+
+neighborhoods.showHide = function () {
+  console.log( $(this) );
+};
+
+
+
+neighborhoods.createNeighborhoodsDropdown = function () {
+
+  var html = "",
+      that = this,
+      template = '<option value="{id}">{name}</option>',
+      nSelect = this.elems.neighborhoodDropdown,
+      nArray = this.neighborhoodsArray.sort(sortByName)
+
+  for( var i=0; i<nArray.length; i++) {
+    var item = nArray[i];
+    html+=template.replace("{id}",item.ID).replace("{name}",item.Name)
+  }
+
+  nSelect.html(html).select2({
+    placeholder: "Select a neighborhood",
+    theme: "classic"
+  });
+
+  nSelect.on("change", function() {
+    that.selectRegion( $(this).val() );
+  });
+
+  // blank default selection
+  nSelect.val(0).trigger('change.select2');
+};
+
+neighborhoods.addDataPoint = function(e) {
+
+  if(e.feature.getGeometry().getType()==='Polygon'){
+      
+      // Create bounds rectangle to place datapoint properly
+      var bounds=new google.maps.LatLngBounds();
+      e.feature.getGeometry().getArray().forEach(function(path){              
+         path.getArray().forEach(function(latLng){bounds.extend(latLng);});
+      });
+      e.feature.setProperty('bounds',bounds);
+      
+      // Push data object with feature data to array and object
+      var dataObject = {
+        "Name":e.feature.H.NAME,
+        "ID" : e.feature.H.REGIONID, 
+        "Center" : bounds.getCenter(),
+        "Feature" : e.feature
+      };
+
+      neighborhoods.neighborhoodsArray.push(dataObject);
+      neighborhoods.neighborhoodsObject[e.feature.H.REGIONID] = dataObject;
+
+      var labelText = e.feature.H.NAME;
+      var labelDiv = document.createElement("div");
+      labelDiv.innerHTML = labelText;
+      labelDiv.setAttribute("class", "shape-label");
+      labelDiv.setAttribute("id", "shape-" + e.feature.H.REGIONID);
+      labelDiv.setAttribute("style", "color:#444;");
+
+      var boxOptions = {
+        content: labelDiv,
+        id : e.feature.H.REGIONID,
+        boxStyle: {
+          border: "none",
+          textAlign: "center",
+          fontSize: "12px",
+          width: "50px"
+        },
+        disableAutoPan: true,
+        pixelOffset: new google.maps.Size(-25, 0),
+        position: bounds.getCenter(), // method to find center of bounding rectangle
+        closeBoxURL: "",
+        isHidden: false,
+        pane: "mapPane",
+        enableEventPropagation: true
+      };
+      //var ib = new InfoBox(boxOptions);              
+      //ib.open(this.map);
+    }
+};
+
+neighborhoods.resizeMap = function() {
+  var w = $(window),
+      that = this;
+  w.resize(function() {
+    that.elems.map.width(w.width()-550);
+    that.elems.sidebar.height(w.height()-55);
+  });
+  w.resize();
+};
+
+neighborhoods.createGraph = function( data ) {
+    
+    console.log(data);
+    if( !data.Zillow ) {
+      data = {};
+      data.Zillow.MedianValue_sqft = {"Values":null,"Months":null};
+      data.Zillow.MedianSold_sqft = {"Values":null,"Months":null};
+      data.Zillow.ZRI_sqft = {"Values":null,"Months":null};
+    }
+    
+    if( !data.Zillow.ZillowMedianValue_sqft ) {
+      data.Zillow.MedianValue_sqft = {"Values":null,"Months":null};
+    }
+
+    if( !data.Zillow.MedianSold_sqft ) {
+      data.Zillow.MedianSold_sqft = {"Values":null,"Months":null};
+    }
+
+    if( !data.Zillow.ZRI_sqft ) {
+      data.Zillow.ZRI_sqft = {"Values":null,"Months":null};
+    }
+
+    $('#graph-home-value').highcharts({
+        chart: {
+            backgroundColor: '#343434',
+            type: 'spline'
+        },
+        legend: {
+        itemStyle: {
+              color: 'white'
+          }
+        },
+        title: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+            categories: data.Zillow.MedianValue_sqft.Months
+        },
+        yAxis: {
+            title: {
+                enabled: false
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        series: [{
+            name: 'Median Home Value per sqft',         
+            data: data.Zillow.MedianValue_sqft.Values
+        },
+        {
+            name: 'Median Home Sold Price per sqft',      
+            data: data.Zillow.MedianSold_sqft.Values,
+            connectNulls: true
+        }
+        ],
+        lang: {
+            noData: "No Data",
+            y: -50
+        },
+        noData: {
+          position: {y: -30},
+            style: {
+                fontWeight: 'bold',
+                fontSize: '15px',
+                color: '#303030'
+            }
+        }        
+    });
+    $('#graph-zri').highcharts({
+            chart: {
+                backgroundColor: '#343434',
+                type: 'spline'
+            },
+            legend: {
+              itemStyle: {
+                  color: 'white'
+              }
+            },            
+            title: {
+                text: '',
+                x: -20
+            },
+            xAxis: {
+                categories: data.Zillow.ZRI_sqft.Months
+            },
+            yAxis: {
+                title: {
+                    enabled: false
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            series: [{
+                name: 'Zillow Rental Index',         
+                data: data.Zillow.ZRI_sqft.Values
+            }
+            ],
+            lang: {
+                noData: "No Data",
+                y: -50
+            },
+            noData: {
+              position: {y: -30},
+                style: {
+                    fontWeight: 'bold',
+                    fontSize: '15px',
+                    color: '#303030'
+                }
+            }        
+        });
+        $('#graph-radar').highcharts({
+          chart: {
+              backgroundColor: '#343434',
+              polar: true,
+              type: 'line'
+          },
+          legend: {
+              itemStyle: {
+                  color: 'white'
+              }
+          },
+          title: {
+              text: '',
+              x: -80
+          },
+          pane: {
+              size: '80%'
+          },
+          xAxis: {
+              categories: ['Population', 'Home Value', 'Crime', 'Demolitions'],
+              tickmarkPlacement: 'on',
+              lineWidth: 0
+          },
+
+          yAxis: {
+              gridLineInterpolation: 'polygon',
+              lineWidth: 0,
+              min: 0
+          },
+
+          tooltip: {
+              shared: true,
+              pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y} %</b><br/>'
+          },
+
+          legend: {
+              enabled: false
+          },
+
+          series: [{
+              name: 'Portland Average',
+              data: [23, 12, 65, 43],
+              pointPlacement: 'on'
+          }, {
+              name: 'Actual Value',
+              data: [37, 9, 24, 28],
+              pointPlacement: 'on'
+          }]
+      });
+    $('#graph-ethnicity').highcharts({
+        chart: {
+            backgroundColor: '#343434',
+            plotBorderWidth: 0,
+            plotShadow: false,
+            marginTop: -50
+        },
+        title: {
+            text: '',
+            style: {
+                display: 'none'
+            }
+        },
+        subtitle: {
+            text: '',
+            style: {
+                display: 'none'
+            }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    distance: -50,
+                    style: {
+                        fontWeight: 'bold',
+                        color: 'white',
+                        textShadow: '0px 1px 2px black'
+                    }
+                },
+                startAngle: -90,
+                endAngle: 90,
+                center: ['50%', '75%']
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Ethnicity',
+            innerSize: '50%',
+            data: data.Ethnicity
+        }]
+    });
+    $('#graph-crime').highcharts({
+        chart: {
+            backgroundColor: '#343434',
+            plotBorderWidth: 0,
+            plotShadow: false,
+            marginTop: -50
+        },
+        title: {
+            text: '',
+            style: {
+                display: 'none'
+            }
+        },
+        subtitle: {
+            text: '',
+            style: {
+                display: 'none'
+            }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    distance: -50,
+                    style: {
+                        fontWeight: 'bold',
+                        color: 'white',
+                        textShadow: '0px 1px 2px black'
+                    }
+                },
+                startAngle: -90,
+                endAngle: 90,
+                center: ['50%', '75%']
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Violent Crime',
+            innerSize: '50%',
+            data: data.VCrime
+        }]
+    });
+
+};
+
+neighborhoods.selectRegion = function( regionID ) { 
+
+  var regionID = regionID + '', // make sure this is a string
+      that = this,
+      //dataPath = "/data/" + regionID + ".json";
+
+      dataPath = "http://plot-pdx.s3-website-us-west-2.amazonaws.com/data/v1/" + regionID + ".json";
+      
+      // need to enable CORS for this to work 
+      //dataPath = "http://ec2-52-88-193-136.us-west-2.compute.amazonaws.com/2016/zillow/v1/" + regionID + ".json"      
+
+  var updateView = function(d){
+    
+    that.map.data.forEach(function(ftr) { 
+        ftr.setProperty('isSelected', false);
+        if( ftr.getProperty('isSelected') ){
+          console.log(ftr);
+        }
+    });
+
+    // select the feature
+    that.neighborhoodsObject[regionID].Feature.setProperty('isSelected', true);
+    
+    // pan to the Feature Region
+    that.map.panTo(that.neighborhoodsObject[regionID].Center);
+
+    // update select2 dropdown (without triggering another change event)
+    that.elems.neighborhoodDropdown.val(regionID).trigger('change.select2');
+
+    // trigger resize (to make sure map updates) ????
+    google.maps.event.trigger(map, 'resize');
+
+    // populate graphs
+    that.createGraph(d);
+
+    // populate census graphs?
+    that.map.data.forEach(function(feature) {
+        //If you want, check here for some constraints.
+        if( typeof feature.getProperty('NAMELSAD10') != 'undefined' ) {
+          that.map.data.remove(feature);
+        }
+    });
+
+  };
+
+  $.ajax({
+    dataType: 'json',
+    url: dataPath,
+    success: function (data) {
+      
+      // Todo : pie chart creator function
+
+
+      // Pre-process Ethnicity data, to two-dimensional array
+    
+      if( data.Race && data.Race.Values) {
+
+        var d = data.Race.Values[0]; //testing use first period
+        var k = Object.keys(d);   
+        var v = [];
+        for(var key in d) {
+            v.push( d[key] );
+        }
+
+        data.Ethnicity = [];
+
+        for( var i=0; i < v.length; i++) {
+          
+          if( k[i] == "total" ) continue;
+
+          var elem = {
+              name: toTitleCase( k[i].replace(/_/g,' ') ),
+              y: v[i],
+              dataLabels: {
+                  //enabled: false
+              }
+          };
+
+          data.Ethnicity.push(elem);
+        }
+      }
+      if( data.ViolentCrime && data.ViolentCrime.Values) {
+
+        var d = data.ViolentCrime.Values[0]; //testing use first period
+        var k = Object.keys(d);   
+        var v = [];
+        for(var key in d) {
+            v.push( d[key] );
+        }
+
+        data.VCrime = [];
+
+        for( var i=0; i < v.length; i++) {
+          
+          if( k[i] == "total" ) continue;
+
+          var elem = {
+              name: toTitleCase( k[i].replace(/_/g,' ') ),
+              y: v[i],
+              dataLabels: {
+                  //enabled: false
+              }
+          };
+
+          data.VCrime.push(elem);
+        }
+      }      
+
+      updateView(data);
+      
+      // load blockgroups geojson
+      //if( typeof data.Blockgroups != 'undefined' && data.Blockgroups.length ) {
+      //  that.map.data.addGeoJson(data.Blockgroups[0]);  
+      //}      
+    },
+    error: function (e) {
+      console.log("error getting data");
+      updateView(null);
+    }
+  });
+};
+
+neighborhoods.init = function() {
+
+  var that = this;
+
+  // create map
+  this.map = new google.maps.Map(this.elems.map[0], this.googleMapParams);
+
+  // create datapoint object for each geojson shape
+  google.maps.event.addListener(this.map.data,'addfeature', this.addDataPoint);
+
+  // load geoJSON (zillow), and create dropdown after it loads
+  this.map.data.loadGeoJson(this.geoJSONPath, null, function (features) {
+    that.createNeighborhoodsDropdown();
+    that.elems.neighborhoodSummary.text(that.neighborhoodsArray.length);
+  });
+
+  // set up selected style
+  this.map.data.setStyle(function(feature) {
+    if( typeof feature.getProperty('NAMELSAD10') != 'undefined' ) {
+      return that.blockgroupStyle;
+    }
+    else if (feature.getProperty('isSelected')) {
+      return that.selectedStyle;
+    }
+    return that.disabledStyle;
+  });
+
+  // set mouseover event for each feature (neighborhood)
+  this.map.data.addListener('mouseover', function(event) {    
+    if (!event.feature.getProperty('isSelected')){
+      that.map.data.revertStyle();
+      that.map.data.overrideStyle(event.feature, that.hoverStyle);  
+    }
+    that.elems.neighborhoodHover.text(event.feature.H.NAME);
+  });
+
+  // set click event for each feature (neighborhood)
+  this.map.data.addListener('click', function(event) {
+    
+    if( typeof event.feature.getProperty('NAMELSAD10') != 'undefined' ) {
+      console.log(event.feature);
+      event.feature.setProperty('isBlockgroup', true);
+    } 
+    else {
+      that.selectRegion( event.feature.H.REGIONID );  
+    } 
+  });
+
+  $(".show-hide").click(function(){
+  
+    var elem = $(this),
+        body = elem.parent().find(".data-body")
+
+    if( body.is(':visible') ) {
+      body.slideUp();
+      elem.text('Show');
+    }
+    else {
+      body.slideDown();
+      elem.text('Hide');
+    }
+  });
+
+  //$(".show-hide").click();
+
+  // resize map and set up autosizing events
+  this.resizeMap();
+
+};

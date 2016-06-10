@@ -1,0 +1,346 @@
+/*Plot PDX CSS
+
+TABLE OF CONTENTS
+
+- Global
+- Utility
+- Headers
+- Nav
+- Map
+- Sidebar
+- Graphs
+- Forms
+- Modals
+- Buttons
+
+Z-INDEX DECLARATIONS
+
+neighborhood hover 1000
+main-header 9000
+
+*/
+
+
+/*GLOBAL
+_____________________________________________________________*/
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+html,
+body {
+    box-sizing: border-box;
+    font-family: "Dosis", sans-serif;
+    margin: 0;
+    overflow-y: scroll;
+    padding: 0;
+}
+
+
+/*UTILITY
+_____________________________________________________________*/
+
+.pull-right {
+    float: right !important;
+}
+
+.show-hide {
+    color: #ccc;
+}
+
+.show-hide:hover {
+    color: #51a1e3;
+}
+
+.disabled {
+    cursor: none;
+    opacity: 0.5;
+}
+
+
+/*HEADERS
+_____________________________________________________________*/
+
+.main-header {
+    background: #e8dc3a;
+    box-shadow: none;
+    color: white;
+    height: 55px;
+    left: 0;
+    margin: 0 auto;
+    position: fixed;
+    text-align: center;
+    top: 0;
+    width: 60% !important;
+    z-index: 9000;
+}
+
+.main-header-wrap {
+    width: 100%
+}
+
+.logo-wrap {
+    height: 100%;
+    padding-left: 40px;
+    position: relative;
+    top: 10px;
+    width: 100%;
+}
+
+.title-text {
+    color: #000000;
+    float: left;
+    font-family: 'Roboto Slab', monospace;
+    font-size: 25px;
+    font-weight: 400;
+    position: relative;
+}
+
+.title-text-bold {
+    font-weight: 700;
+}
+
+.plot-logo {
+    display: inline-block;
+    position: relative;
+    float: left;
+    padding: 0px 2px;
+}
+
+.plot-logo img {
+    width: 30px;
+}
+
+/*NAV
+_____________________________________________________________*/
+
+.main-nav {
+    margin-right: 40px;
+}
+
+.nav-item {
+    color: #000000;
+    display: inline-block;
+    font-family: 'Dosis', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 55px;
+    padding: 0 11px;
+    position: relative;
+    text-decoration: none;
+}
+
+#map {
+    height: 100%;
+    position: absolute;
+    width: 60% !important;
+}
+
+/*SIDEBAR
+_____________________________________________________________*/
+
+
+.hack-oregon-logo {
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+}
+
+.hack-oregon-logo img {
+    width: 90px;
+}
+
+#neighborhood-hover {
+    background: #e8dc3a;
+    border-radius: 0;
+    bottom: 0;
+    color: #000000;
+    font-family: 'Roboto Slab', monospace;
+    font-size: 20px;
+    left: 0;
+    padding: 10px;
+    position: absolute;
+    text-align: center;
+    width: 170px;
+    z-index: 1000;
+}
+
+#sidebar {
+    background: #f5f5f5;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0px;
+    width: 40% !important;
+    height: 100% !important;
+}
+
+.sidebar-header {
+    background: #343434;
+    height: 130px;
+    padding: 25px;
+    border-bottom: 1px solid grey;
+    padding: 15px;
+}
+
+.sidebar-header-title {
+    color: white;
+    font-family: 'Roboto Slab', monospace;
+    font-size: 20px;
+    margin-bottom: 5px;
+    margin-top: 0;
+    text-align: center;
+}
+
+.sidebar-body {
+    background-color: #343434;
+    bottom: 0;
+    overflow-y: auto;
+    position: absolute;
+    right: 0;
+    top: 130px;
+    width: 100%;
+}
+
+.data-section {
+    padding: 0 30px;
+}
+
+.data-section-heading {
+    border-bottom: 1px #ccc solid;
+    color: #FFFFFF;
+    font-family: 'Roboto Slab', monospace;
+    font-size: 1.4em;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    padding-bottom: 5px;
+}
+
+.summary-container {
+    float: right;
+    text-align: right;
+}
+
+#neighborhood-summary {
+    color: #51a1e3;
+    font-family: 'Dosis', sans-serif;
+    font-size: 36px;
+    font-weight: bold;
+    line-height: 1em;
+    margin-top: 24px;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+.summary-label {
+    color: white;
+}
+
+
+/*GRAPHS
+_____________________________________________________________*/
+/*TODO: remove inline graph styles from index.html and create class-based selectors*/
+
+/*FORM STYLES
+_____________________________________________________________*/
+
+.neighborhood-label {
+    display: block;
+    font-size: 14px;
+    line-height: 24px;
+}
+
+#neighborhood-dropdown {
+    margin-top: 0;
+    width: 240px;
+}
+
+/*TODO: add IE9 vendor prefix for linear-gradient if we need to support IE9*/
+/*TODO: remove this CSS block if we do not add an input field to the code*/
+.select2-search input {
+    background: url('select2.png') no-repeat 100% -22px, linear-gradient(to bottom, #fff 85%, #eee 99%) 0 0; /* Fx 10+, Op 11.6+, Ch 26+, IE 10 */
+    border: 1px solid #aaa;
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    font-family: sans-serif;
+    font-size: 1em;
+    height: auto !important;
+    margin: 0;
+    min-height: 26px;
+    outline: 0;
+    padding: 4px 20px 4px 5px;
+    width: 100%;
+}
+
+.select2-container--classic .select2-selection--single .select2-selection__arrow {
+    background-color: white;
+    background-image: none;
+    background-repeat: no-repeat;
+    border-bottom-right-radius: 4px;
+    border-style: none;
+    border-top-right-radius: 4px;
+    filter: none;
+    height: 26px;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    width: 20px;
+}
+
+.select2-container--classic .select2-selection--single {
+    background: #FFFFFF none no-repeat;
+    border: 1px solid #aaa;
+    border-radius: 0;
+    filter: none;
+    outline: 0;
+}
+
+.select2-container--classic.select2-container--open.select2-container--below .select2-selection--single {
+    background-image: none;
+    background-image: -o-linear-gradient(top, #eee 50%, #fff 100%);
+    background-repeat: no-repeat;
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    filter: none;
+}
+
+.select2-container {
+    box-sizing: border-box;
+    display: block;
+    position: relative;
+    vertical-align: middle;
+    margin: 0 auto !important;
+}
+
+/*MODALS
+_____________________________________________________________*/
+
+.modal_text {
+    color: #f5f5f5;
+}
+
+.modal_close {
+    color: #f5f5f5;
+    font-size: 50px;
+    position: absolute;
+    right: 50px !important;
+    text-decoration: none;
+    top: 30px !important;
+}
+
+/*BUTTON STYLES
+_____________________________________________________________*/
+
+.start-button,
+.stop-button {
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: underline;
+}

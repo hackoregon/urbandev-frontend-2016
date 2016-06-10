@@ -1,0 +1,108 @@
+
+RegionID.json
+
+## block groups
+
+* just shapes
+* around 9-10 per neighborhood
+
+## zillow data (line chart)
+
+* median home value per sqft over time (1996-2016)
+* median sold price per sqft over time (1996-2016)
+* zillow ZRI, rental estimate over time (2010-2016)
+
+## census data - radar plot
+
+
+## 2014 data for crime per neighborhood
+## 2014 data for demolitions neighborhood
+## 2014 census data 
+
+
+*
+
+JSON
+{
+  "RegionName": “asd”,
+  "RegionID": 123,
+  "Blockgroups" : [
+    { ..geojson blockgroup 1 },
+    { ..geojson blockgroup 2 },
+  ],  
+  "Zillow" : {
+    "ZRI" : {
+      "Months": [“1996-01”, “1996-02”],
+      "Values":  [1, 1.2 ]
+    }
+  },
+  "Census" : {
+    "Education" : {
+      "BachelorsDegrees" : {
+      "Years" : [1990, 2000, 2009, 2014],
+      "Values" : [1, 2, 3, 4]  
+      }
+    },
+    "Income" : {
+      "Years" : [1990, 2000, 2009, 2014],
+      "Values" : [1, 2, 3, 4]  
+    }.
+    "HomeOwnership" { ... },
+    "Race" {
+      "Years" : [1990, 2000, 2009, 2014],
+      "Values" : [{
+        "White":"50%",
+        "Hispanic":"50%"
+      }] 
+    },
+    "Race" { ... }
+  }
+}
+
+$('#container').highcharts({
+
+        chart: {
+            polar: true,
+            type: 'line'
+        },
+
+        title: {
+            text: 'Budget vs spending',
+            x: -80
+        },
+
+        pane: {
+            size: '80%'
+        },
+
+        xAxis: {
+            categories: ['Population', '% Home Owners', '% Renters', 'Crime', 'Income'],
+            tickmarkPlacement: 'on',
+            lineWidth: 0
+        },
+
+        yAxis: {
+            gridLineInterpolation: 'polygon',
+            lineWidth: 0,
+            min: 0
+        },
+
+        tooltip: {
+            shared: true,
+            pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y:,.0f}</b><br/>'
+        },
+
+        legend: {
+            align: 'right',
+            verticalAlign: 'top',
+            y: 70,
+            layout: 'vertical'
+        },
+
+        series: [{
+            name: 'Allocated Budget',
+            data: [43000, 19000, 60000, 35000],
+            pointPlacement: 'on'
+        }]
+
+    });
