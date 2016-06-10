@@ -143,15 +143,15 @@ neighborhoods.resizeMap = function() {
 
 neighborhoods.createGraph = function( data ) {
     
-    console.log(data);
+    
     if( !data.Zillow ) {
-      data = {};
+      data.Zillow = {};
       data.Zillow.MedianValue_sqft = {"Values":null,"Months":null};
       data.Zillow.MedianSold_sqft = {"Values":null,"Months":null};
       data.Zillow.ZRI_sqft = {"Values":null,"Months":null};
     }
     
-    if( !data.Zillow.ZillowMedianValue_sqft ) {
+    if( !data.Zillow.MedianValue_sqft ) {
       data.Zillow.MedianValue_sqft = {"Values":null,"Months":null};
     }
 
