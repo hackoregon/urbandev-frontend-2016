@@ -48,12 +48,6 @@ var neighborhoods = {
   } 
 };
 
-neighborhoods.showHide = function () {
-  console.log( $(this) );
-};
-
-
-
 neighborhoods.createNeighborhoodsDropdown = function () {
 
   var html = "",
@@ -274,192 +268,145 @@ neighborhoods.createGraph = function( data ) {
                 }
             }        
         });
-        $('#graph-radar').highcharts({
+    $('#graph-radar').highcharts({
+      chart: {
+          backgroundColor: '#343434',
+          polar: true,
+          type: 'line'
+      },
+      legend: {
+          itemStyle: {
+              color: 'white'
+          }
+      },
+      title: {
+          text: '',
+          x: -80
+      },
+      pane: {
+          size: '80%'
+      },
+      xAxis: {
+          categories: ['Population', 'Home Value', 'Crime', 'Demolitions'],
+          tickmarkPlacement: 'on',
+          lineWidth: 0
+      },
+
+      yAxis: {
+          gridLineInterpolation: 'polygon',
+          lineWidth: 0,
+          min: 0
+      },
+
+      tooltip: {
+          shared: true,
+          pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y} %</b><br/>'
+      },
+
+      legend: {
+          enabled: false
+      },
+
+      series: [{
+          name: 'Portland Average',
+          data: [23, 12, 65, 43],
+          pointPlacement: 'on'
+      }, {
+          name: 'Actual Value',
+          data: [37, 9, 24, 28],
+          pointPlacement: 'on'
+      }]
+  });
+};
+
+neighborhoods.createPieChart = function( selector, keyName, data ) {
+
+    if( data[keyName] && data[keyName].Values) {
+
+      var d = data[keyName].Values[0]; //for now just use first time period
+      var k = Object.keys(d);   
+      var v = [];
+      for(var key in d) {
+          v.push( d[key] );
+      }
+
+      data.highcharts[keyName] = [];
+
+      for( var i=0; i < v.length; i++) {
+        
+        if( k[i] == "total" ) continue;
+
+        var elem = {
+            name: toTitleCase( k[i].replace(/_/g,' ') ),
+            y: v[i],
+            dataLabels: {
+                //enabled: false
+            }
+        };
+
+        data.highcharts[keyName].push(elem);
+      }
+
+      $(selector).highcharts({
           chart: {
               backgroundColor: '#343434',
-              polar: true,
-              type: 'line'
+              plotBorderWidth: 0,
+              plotShadow: false,
+              marginTop: -20,
+              marginBottom: 0,
           },
           legend: {
-              itemStyle: {
-                  color: 'white'
-              }
-          },
+            itemStyle: {
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: '18px'
+            }
+          },    
           title: {
               text: '',
-              x: -80
+              style: {
+                  display: 'none'
+              }
           },
-          pane: {
-              size: '80%'
+          subtitle: {
+              text: '',
+              style: {
+                  display: 'none'
+              }
           },
-          xAxis: {
-              categories: ['Population', 'Home Value', 'Crime', 'Demolitions'],
-              tickmarkPlacement: 'on',
-              lineWidth: 0
-          },
-
-          yAxis: {
-              gridLineInterpolation: 'polygon',
-              lineWidth: 0,
-              min: 0
-          },
-
           tooltip: {
-              shared: true,
-              pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y} %</b><br/>'
+              pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
           },
-
-          legend: {
-              enabled: false
+          plotOptions: {
+              pie: {
+                  dataLabels: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      enabled: false,                  
+                      distance: -50,
+                      style: {
+                          fontWeight: 'bold',
+                          color: 'white',
+                          textShadow: '0px 1px 2px black'
+                      }
+                  },
+                  showInLegend: true,
+                  startAngle: -90,
+                  endAngle: 90,
+                  center: ['50%', '75%']
+              }
           },
-
           series: [{
-              name: 'Portland Average',
-              data: [23, 12, 65, 43],
-              pointPlacement: 'on'
-          }, {
-              name: 'Actual Value',
-              data: [37, 9, 24, 28],
-              pointPlacement: 'on'
+              type: 'pie',
+              name: keyName,
+              innerSize: '50%',
+              data: data.highcharts[keyName]
           }]
       });
-    $('#graph-ethnicity').highcharts({
-        chart: {
-            backgroundColor: '#343434',
-            plotBorderWidth: 0,
-            plotShadow: false,
-            marginTop: -50
-        },
-        title: {
-            text: '',
-            style: {
-                display: 'none'
-            }
-        },
-        subtitle: {
-            text: '',
-            style: {
-                display: 'none'
-            }
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                dataLabels: {
-                    enabled: true,
-                    distance: -50,
-                    style: {
-                        fontWeight: 'bold',
-                        color: 'white',
-                        textShadow: '0px 1px 2px black'
-                    }
-                },
-                startAngle: -90,
-                endAngle: 90,
-                center: ['50%', '75%']
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: 'Ethnicity',
-            innerSize: '50%',
-            data: data.Ethnicity
-        }]
-    });
-    $('#graph-crime').highcharts({
-        chart: {
-            backgroundColor: '#343434',
-            plotBorderWidth: 0,
-            plotShadow: false,
-            marginTop: -50
-        },
-        title: {
-            text: '',
-            style: {
-                display: 'none'
-            }
-        },
-        subtitle: {
-            text: '',
-            style: {
-                display: 'none'
-            }
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                dataLabels: {
-                    enabled: true,
-                    distance: -50,
-                    style: {
-                        fontWeight: 'bold',
-                        color: 'white',
-                        textShadow: '0px 1px 2px black'
-                    }
-                },
-                startAngle: -90,
-                endAngle: 90,
-                center: ['50%', '75%']
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: 'Violent Crime',
-            innerSize: '50%',
-            data: data.VCrime
-        }]
-    });
-    $('#graph-education').highcharts({
-        chart: {
-            backgroundColor: '#343434',
-            plotBorderWidth: 0,
-            plotShadow: false,
-            marginTop: -50
-        },
-        title: {
-            text: '',
-            style: {
-                display: 'none'
-            }
-        },
-        subtitle: {
-            text: '',
-            style: {
-                display: 'none'
-            }
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                dataLabels: {
-                    enabled: true,
-                    distance: -50,
-                    style: {
-                        fontWeight: 'bold',
-                        color: 'white',
-                        textShadow: '0px 1px 2px black'
-                    }
-                },
-                startAngle: -90,
-                endAngle: 90,
-                center: ['50%', '75%']
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: 'Education',
-            innerSize: '50%',
-            data: data.HEducation
-        }]
-    });
 
+    }
 };
+
 
 neighborhoods.selectRegion = function( regionID ) { 
 
@@ -488,16 +435,38 @@ neighborhoods.selectRegion = function( regionID ) {
     // trigger resize (to make sure map updates) ????
     google.maps.event.trigger(map, 'resize');
 
+    // create object for summarized chart data
+    d.highcharts = {};
+
     // populate graphs
     that.createGraph(d);
 
-    // create table
+    that.createPieChart('#graph-education', 'Education', d);
+    that.createPieChart('#graph-crime', 'ViolentCrime', d);
+
+
+    // Sort Crime Types and Pre-Process 
     if( d.Crime && d.Crime.Values && d.Crime.Values.length ){
-      var i = d.Crime.Values.length -1;
-      console.log( d.Crime.Values[i] );
-      that.createTable(d.Crime.Values[i], $("#crime-types"));
+      
+      var obj = d.Crime.Values[ d.Crime.Values.length - 1]; //grab latest crime
+      var sortable = [];
+
+      for (var item in obj)
+        sortable.push([item, obj[item]])
+
+      sortable.sort(function(a, b) {return b[1] - a[1]});
+      sortable = sortable.slice(0,6);
+      d.Crime.Values[0] = {};
+
+      for( var i=0; i< sortable.length;i++)
+        d.Crime.Values[0][sortable[i][0]] = sortable[i][1]
+  
+      that.createPieChart('#graph-crime-types', 'Crime', d);
+      //that.createTable(d.Crime.Values[i], $("#crime-types"));
     }
-    
+
+    that.createPieChart('#graph-ethnicity', 'Race', d);
+
     // populate census graphs?
     that.map.data.forEach(function(feature) {
         //If you want, check here for some constraints.
@@ -517,86 +486,6 @@ neighborhoods.selectRegion = function( regionID ) {
 
 
       // Pre-process Ethnicity data, to two-dimensional array
-    
-      if( data.Race && data.Race.Values) {
-
-        var d = data.Race.Values[0]; //testing use first period
-        var k = Object.keys(d);   
-        var v = [];
-        for(var key in d) {
-            v.push( d[key] );
-        }
-
-        data.Ethnicity = [];
-
-        for( var i=0; i < v.length; i++) {
-          
-          if( k[i] == "total" ) continue;
-
-          var elem = {
-              name: toTitleCase( k[i].replace(/_/g,' ') ),
-              y: v[i],
-              dataLabels: {
-                  //enabled: false
-              }
-          };
-
-          data.Ethnicity.push(elem);
-        }
-      }
-      if( data.ViolentCrime && data.ViolentCrime.Values) {
-
-        var d = data.ViolentCrime.Values[0]; //testing use first period
-        var k = Object.keys(d);   
-        var v = [];
-        for(var key in d) {
-            v.push( d[key] );
-        }
-
-        data.VCrime = [];
-
-        for( var i=0; i < v.length; i++) {
-          
-          if( k[i] == "total" ) continue;
-
-          var elem = {
-              name: toTitleCase( k[i].replace(/_/g,' ') ),
-              y: v[i],
-              dataLabels: {
-                  //enabled: false
-              }
-          };
-
-          data.VCrime.push(elem);
-        }
-        console.log(data.VCrime);
-      }
-      if( data.Education && data.Education.Values) {
-
-        var d = data.Education.Values[0]; //testing use first period
-        var k = Object.keys(d);   
-        var v = [];
-        for(var key in d) {
-            v.push( d[key] );
-        }
-
-        data.HEducation = [];
-
-        for( var i=0; i < v.length; i++) {
-          
-          if( k[i] == "total" ) continue;
-
-          var elem = {
-              name: toTitleCase( k[i].replace(/_/g,' ') ),
-              y: v[i],
-              dataLabels: {
-                  //enabled: false
-              }
-          };
-
-          data.HEducation.push(elem);
-        }
-      } 
 
       updateView(data);
       

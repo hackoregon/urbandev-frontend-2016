@@ -246,6 +246,19 @@ _____________________________________________________________*/
 _____________________________________________________________*/
 /*TODO: remove inline graph styles from index.html and create class-based selectors*/
 
+
+.graph-standard {
+    height:300px;
+    margin: 0 auto;
+}
+
+.graph-top-space {
+    height:300px;
+    margin: 0 auto;
+    margin-top:40px;
+}
+
+
 /*FORM STYLES
 _____________________________________________________________*/
 
