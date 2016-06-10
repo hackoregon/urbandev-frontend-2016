@@ -141,9 +141,25 @@ neighborhoods.resizeMap = function() {
   w.resize();
 };
 
+neighborhoods.createTable = function( obj, elem ) {
+
+  var html = '';
+
+  var keys = Object.keys(obj);
+
+  for (var i = 0; i < keys.length; i++) {
+      var tr = "<tr>";
+      tr += "<td>" + keys[i] + "</td>" + "<td>" + (obj[keys[i]] ? obj[keys[i]] : '') + "</td></tr>";
+      html += tr;
+  }
+
+  elem.html(html);
+  console.log(html);
+}
+
+
 neighborhoods.createGraph = function( data ) {
-    
-    
+        
     if( !data.Zillow ) {
       data.Zillow = {};
       data.Zillow.MedianValue_sqft = {"Values":null,"Months":null};
@@ -397,6 +413,51 @@ neighborhoods.createGraph = function( data ) {
             data: data.VCrime
         }]
     });
+    $('#graph-education').highcharts({
+        chart: {
+            backgroundColor: '#343434',
+            plotBorderWidth: 0,
+            plotShadow: false,
+            marginTop: -50
+        },
+        title: {
+            text: '',
+            style: {
+                display: 'none'
+            }
+        },
+        subtitle: {
+            text: '',
+            style: {
+                display: 'none'
+            }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    distance: -50,
+                    style: {
+                        fontWeight: 'bold',
+                        color: 'white',
+                        textShadow: '0px 1px 2px black'
+                    }
+                },
+                startAngle: -90,
+                endAngle: 90,
+                center: ['50%', '75%']
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Education',
+            innerSize: '50%',
+            data: data.HEducation
+        }]
+    });
 
 };
 
@@ -404,13 +465,8 @@ neighborhoods.selectRegion = function( regionID ) {
 
   var regionID = regionID + '', // make sure this is a string
       that = this,
-      //dataPath = "/data/" + regionID + ".json";
-
       dataPath = "http://plot-pdx.s3-website-us-west-2.amazonaws.com/data/v1/" + regionID + ".json";
       
-      // need to enable CORS for this to work 
-      //dataPath = "http://ec2-52-88-193-136.us-west-2.compute.amazonaws.com/2016/zillow/v1/" + regionID + ".json"      
-
   var updateView = function(d){
     
     that.map.data.forEach(function(ftr) { 
@@ -435,6 +491,13 @@ neighborhoods.selectRegion = function( regionID ) {
     // populate graphs
     that.createGraph(d);
 
+    // create table
+    if( d.Crime && d.Crime.Values && d.Crime.Values.length ){
+      var i = d.Crime.Values.length -1;
+      console.log( d.Crime.Values[i] );
+      that.createTable(d.Crime.Values[i], $("#crime-types"));
+    }
+    
     // populate census graphs?
     that.map.data.forEach(function(feature) {
         //If you want, check here for some constraints.
@@ -506,7 +569,34 @@ neighborhoods.selectRegion = function( regionID ) {
 
           data.VCrime.push(elem);
         }
-      }      
+        console.log(data.VCrime);
+      }
+      if( data.Education && data.Education.Values) {
+
+        var d = data.Education.Values[0]; //testing use first period
+        var k = Object.keys(d);   
+        var v = [];
+        for(var key in d) {
+            v.push( d[key] );
+        }
+
+        data.HEducation = [];
+
+        for( var i=0; i < v.length; i++) {
+          
+          if( k[i] == "total" ) continue;
+
+          var elem = {
+              name: toTitleCase( k[i].replace(/_/g,' ') ),
+              y: v[i],
+              dataLabels: {
+                  //enabled: false
+              }
+          };
+
+          data.HEducation.push(elem);
+        }
+      } 
 
       updateView(data);
       
