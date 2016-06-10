@@ -350,7 +350,17 @@ neighborhoods.createGraph = function( data ) {
             name: 'Ethnicity',
             innerSize: '50%',
             data: data.Ethnicity
-        }]
+        }],
+        colors: [
+      '#808588',
+      '#999C9E',
+      "#B4B7B9",
+      "#E0E0E0",
+      '#B8D7EB',
+      '#7AB3E3',
+      '#51A1E3',
+      '#418CC9'
+   ]
     });
     $('#graph-crime').highcharts({
         chart: {
