@@ -211,6 +211,10 @@ _____________________________________________________________*/
     padding: 0 30px;
 }
 
+.data-body p, .data-body h3 {
+    color:white;
+}
+
 .data-section-heading {
     border-bottom: 1px #ccc solid;
     color: #FFFFFF;

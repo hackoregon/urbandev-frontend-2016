@@ -148,11 +148,10 @@ neighborhoods.createTable = function( obj, elem ) {
   }
 
   elem.html(html);
-  console.log(html);
 }
 
 
-neighborhoods.createGraph = function( data ) {
+neighborhoods.createZillowGraphs = function( data ) {
         
     if( !data.Zillow ) {
       data.Zillow = {};
@@ -173,22 +172,48 @@ neighborhoods.createGraph = function( data ) {
       data.Zillow.ZRI_sqft = {"Values":null,"Months":null};
     }
 
+    // Pre-process data to remove outliers
+    var value = data.Zillow.MedianValue_sqft.Values;
+    var sold = data.Zillow.MedianSold_sqft.Values;
+
+    if( value && value.length && sold && sold.length ){
+      for( var i=0; i<value.length; i++){
+        if( value[i] > 2500 ){
+          value[i] = null;
+        }
+        if( sold[i] > 2500 ) {
+          sold[i] = null;
+        }
+      }
+    }
+    
+
     $('#graph-home-value').highcharts({
         chart: {
             backgroundColor: '#343434',
             type: 'spline'
         },
         legend: {
-        itemStyle: {
-              color: 'white'
-          }
-        },
+            itemStyle: {
+                color: 'white',                
+                fontSize: '16px'
+            },
+            itemHoverStyle: {
+              color: 'white',
+              fontWeight: 'bold'
+            }            
+        }, 
         title: {
             text: '',
             x: -20
         },
         xAxis: {
-            categories: data.Zillow.MedianValue_sqft.Months
+            categories: data.Zillow.MedianValue_sqft.Months,
+            labels: {
+                style: {
+                    color: '#efefef'
+                }
+            }
         },
         yAxis: {
             title: {
@@ -197,8 +222,13 @@ neighborhoods.createGraph = function( data ) {
             plotLines: [{
                 value: 0,
                 width: 1,
-                color: '#808080'
-            }]
+                color: '#efefef'
+            }],
+            labels: {
+                style: {
+                    color: '#efefef'
+                }
+            }            
         },
         series: [{
             name: 'Median Home Value per sqft',         
@@ -268,7 +298,11 @@ neighborhoods.createGraph = function( data ) {
                 }
             }        
         });
-    $('#graph-radar').highcharts({
+};
+
+neighborhoods.createRadarChart = function( selector, keyName, data ) {
+
+  $('#graph-radar').highcharts({
       chart: {
           backgroundColor: '#343434',
           polar: true,
@@ -322,8 +356,9 @@ neighborhoods.createGraph = function( data ) {
 neighborhoods.createPieChart = function( selector, keyName, data ) {
 
     if( data[keyName] && data[keyName].Values) {
-
-      var d = data[keyName].Values[0]; //for now just use first time period
+      
+      //for now just use latest time period
+      var d = data[keyName].Values[0]; 
       var k = Object.keys(d);   
       var v = [];
       for(var key in d) {
@@ -352,15 +387,18 @@ neighborhoods.createPieChart = function( selector, keyName, data ) {
               backgroundColor: '#343434',
               plotBorderWidth: 0,
               plotShadow: false,
-              marginTop: -20,
+              marginTop: -30,
               marginBottom: 0,
           },
           legend: {
             itemStyle: {
-                color: 'white',
-                fontWeight: 'bold',
-                fontSize: '18px'
-            }
+                color: 'white',                
+                fontSize: '16px'
+            },
+            itemHoverStyle: {
+              color: 'white',
+              fontWeight: 'bold'
+            }            
           },    
           title: {
               text: '',
@@ -419,7 +457,7 @@ neighborhoods.selectRegion = function( regionID ) {
     that.map.data.forEach(function(ftr) { 
         ftr.setProperty('isSelected', false);
         if( ftr.getProperty('isSelected') ){
-          console.log(ftr);
+          //console.log(ftr);
         }
     });
 
@@ -438,41 +476,40 @@ neighborhoods.selectRegion = function( regionID ) {
     // create object for summarized chart data
     d.highcharts = {};
 
-    // populate graphs
-    that.createGraph(d);
-
-    that.createPieChart('#graph-education', 'Education', d);
-    that.createPieChart('#graph-crime', 'ViolentCrime', d);
-
-
     // Sort Crime Types and Pre-Process 
     if( d.Crime && d.Crime.Values && d.Crime.Values.length ){
       
       var obj = d.Crime.Values[ d.Crime.Values.length - 1]; //grab latest crime
       var sortable = [];
-
-      for (var item in obj)
-        sortable.push([item, obj[item]])
-
+      for (var item in obj){
+        var name = item;
+        if( item == "larceny"){ name = "theft"; }
+        if( item == "duii"){ name = "DUII"; }
+        sortable.push([name, obj[item]])
+      }
       sortable.sort(function(a, b) {return b[1] - a[1]});
       sortable = sortable.slice(0,6);
       d.Crime.Values[0] = {};
 
-      for( var i=0; i< sortable.length;i++)
+      for( var i=0; i< sortable.length;i++) {
         d.Crime.Values[0][sortable[i][0]] = sortable[i][1]
-  
+      }
       that.createPieChart('#graph-crime-types', 'Crime', d);
       //that.createTable(d.Crime.Values[i], $("#crime-types"));
     }
 
+    // populate graphs
+    that.createZillowGraphs(d);
+    that.createPieChart('#graph-education', 'Education', d);
+    that.createPieChart('#graph-crime', 'ViolentCrime', d);
     that.createPieChart('#graph-ethnicity', 'Race', d);
 
     // populate census graphs?
     that.map.data.forEach(function(feature) {
         //If you want, check here for some constraints.
-        if( typeof feature.getProperty('NAMELSAD10') != 'undefined' ) {
-          that.map.data.remove(feature);
-        }
+        //if( typeof feature.getProperty('NAMELSAD10') != 'undefined' ) {
+        //  that.map.data.remove(feature);
+        //}
     });
 
   };
@@ -482,14 +519,9 @@ neighborhoods.selectRegion = function( regionID ) {
     url: dataPath,
     success: function (data) {
       
-      // Todo : pie chart creator function
-
-
-      // Pre-process Ethnicity data, to two-dimensional array
-
       updateView(data);
       
-      // load blockgroups geojson
+      // load blockgroups geojson ** we have disabled this feature!
       //if( typeof data.Blockgroups != 'undefined' && data.Blockgroups.length ) {
       //  that.map.data.addGeoJson(data.Blockgroups[0]);  
       //}      
@@ -541,13 +573,14 @@ neighborhoods.init = function() {
   this.map.data.addListener('click', function(event) {
     
     if( typeof event.feature.getProperty('NAMELSAD10') != 'undefined' ) {
-      console.log(event.feature);
       event.feature.setProperty('isBlockgroup', true);
     } 
     else {
       that.selectRegion( event.feature.H.REGIONID );  
     } 
   });
+
+  /* removed show/hide feature
 
   $(".show-hide").click(function(){
   
@@ -563,8 +596,7 @@ neighborhoods.init = function() {
       elem.text('Hide');
     }
   });
-
-  //$(".show-hide").click();
+  */
 
   // resize map and set up autosizing events
   this.resizeMap();
