@@ -299,22 +299,21 @@ neighborhoods.createZillowGraphs = function( data ) {
         });
 
 };
-// Average Rent Columngraph
-neighborhoods.createColumnChart = function(data){
-// Todo function to take care of some outliers in data
-// Todo function to round decimal to two points on data
+// Average Rental Prices Chart
+neighborhoods.createRentChart = function(data){
+  
+  // Handle null data
 
-  // var for Craigslist Rental data
-  var studio = data.Craigslist.Values.avg_price_studio;
-  var oneRoom = data.Craigslist.Values.avg_price_1_br;
-  var twoRoom = data.Craigslist.Values.avg_price_2_br;
-  var threeRoom = data.Craigslist.Values.avg_price_3_br;
-  // variables for hardcoded Overall portland rental data
-  var pStudio = 1000;
-  var pOneRoom = 1350;
-  var pTwoRoom = 2000;
-  var pThreeRoom = 4500;
-  $('#graph-averageRent').highcharts({
+  // Craigslist Rental data
+  var neighborhoodData = [roundVal(data.Craigslist.Values.avg_price_studio),
+                          roundVal(data.Craigslist.Values.avg_price_1_br),
+                          roundVal(data.Craigslist.Values.avg_price_2_br),
+                          roundVal(data.Craigslist.Values.avg_price_3_br)];
+
+  // hardcoded Overall portland rental data
+  var portlandData = [1000,1350,2000,4500];
+
+  $('#graph-average-rent').highcharts({
         chart: {
             backgroundColor: '#343434',
             type: 'column'
@@ -335,6 +334,21 @@ neighborhoods.createColumnChart = function(data){
             tickinterval: 0,
 
         },
+       yAxis: {
+            title: {
+                enabled: false
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#efefef'
+            }],
+            labels: {
+                style: {
+                    color: '#efefef'
+                }
+            }            
+        },        
         plotOptions: {
             series: {
                 allowPointSelect: true
@@ -347,14 +361,14 @@ neighborhoods.createColumnChart = function(data){
         },
         series: [{
             name: data.RegionName,
-            data: [studio, oneRoom, twoRoom, threeRoom],
+            data: neighborhoodData,
             color: '#E8DC3A',
             lineWidth: 3
 
 
         },{
-            name: 'Portland',
-            data: [pStudio, pOneRoom, pTwoRoom, pThreeRoom],
+            name: 'Portland Average',
+            data: portlandData,
             color: '#51A1e3',
             lineWidth: 3
          }]
@@ -563,10 +577,12 @@ neighborhoods.selectRegion = function( regionID ) {
 
     // populate graphs
     that.createZillowGraphs(d);
+    
     that.createPieChart('#graph-education', 'Education', d);
     that.createPieChart('#graph-crime', 'ViolentCrime', d);
     that.createPieChart('#graph-ethnicity', 'Race', d);
-    that.createColumnChart(d);
+    
+    that.createRentChart(d);
 
     // 
     var exampletableData = {
