@@ -186,8 +186,6 @@ neighborhoods.createZillowGraphs = function( data ) {
         }
       }
     }
-    
-
     $('#graph-home-value').highcharts({
         chart: {
             backgroundColor: '#343434',
@@ -232,7 +230,7 @@ neighborhoods.createZillowGraphs = function( data ) {
         },
         series: [{
             name: 'Median Home Value per sqft',         
-            data: data.Zillow.MedianValue_sqft.Values
+            data: data.Zillow.MedianValue_sqft.Values,
         },
         {
             name: 'Median Home Sold Price per sqft',      
@@ -253,6 +251,7 @@ neighborhoods.createZillowGraphs = function( data ) {
             }
         }        
     });
+    
     $('#graph-zri').highcharts({
             chart: {
                 backgroundColor: '#343434',
@@ -282,7 +281,7 @@ neighborhoods.createZillowGraphs = function( data ) {
             },
             series: [{
                 name: 'Zillow Rental Index',         
-                data: data.Zillow.ZRI_sqft.Values
+                data: data.Zillow.ZRI_sqft.Values,
             }
             ],
             lang: {
@@ -298,6 +297,68 @@ neighborhoods.createZillowGraphs = function( data ) {
                 }
             }        
         });
+
+};
+// Average Rent Columngraph
+neighborhoods.createColumnChart = function(data){
+// Todo function to take care of some outliers in data
+// Todo function to round decimal to two points on data
+
+  // var for Craigslist Rental data
+  var studio = data.Craigslist.Values.avg_price_studio;
+  var oneRoom = data.Craigslist.Values.avg_price_1_br;
+  var twoRoom = data.Craigslist.Values.avg_price_2_br;
+  var threeRoom = data.Craigslist.Values.avg_price_3_br;
+  // variables for hardcoded Overall portland rental data
+  var pStudio = 1000;
+  var pOneRoom = 1350;
+  var pTwoRoom = 2000;
+  var pThreeRoom = 4500;
+  $('#graph-averageRent').highcharts({
+        chart: {
+            backgroundColor: '#343434',
+            type: 'column'
+        },
+
+        legend: {
+              itemStyle: {
+                  color: '#efefef'
+              }
+            },     
+        xAxis: {
+          labels:{
+            style: {
+                    color: '#efefef'
+                }
+            },
+            categories: ['Studio','1Br','2Br','3Br+'],
+            tickinterval: 0,
+
+        },
+        plotOptions: {
+            series: {
+                allowPointSelect: true
+            },
+            column: {
+        pointPadding: 0,
+        borderWidth: 0,
+        shadow: false,
+    }
+        },
+        series: [{
+            name: data.RegionName,
+            data: [studio, oneRoom, twoRoom, threeRoom],
+            color: '#E8DC3A',
+            lineWidth: 3
+
+
+        },{
+            name: 'Portland',
+            data: [pStudio, pOneRoom, pTwoRoom, pThreeRoom],
+            color: '#51A1e3',
+            lineWidth: 3
+         }]
+    });
 };
 
 neighborhoods.createRadarChart = function( selector, keyName, data ) {
@@ -352,6 +413,7 @@ neighborhoods.createRadarChart = function( selector, keyName, data ) {
       }]
   });
 };
+
 
 neighborhoods.createPieChart = function( selector, keyName, data ) {
 
@@ -446,6 +508,7 @@ neighborhoods.createPieChart = function( selector, keyName, data ) {
 };
 
 
+
 neighborhoods.selectRegion = function( regionID ) { 
 
   var regionID = regionID + '', // make sure this is a string
@@ -503,6 +566,7 @@ neighborhoods.selectRegion = function( regionID ) {
     that.createPieChart('#graph-education', 'Education', d);
     that.createPieChart('#graph-crime', 'ViolentCrime', d);
     that.createPieChart('#graph-ethnicity', 'Race', d);
+    that.createColumnChart(d);
 
     // populate census graphs?
     that.map.data.forEach(function(feature) {
@@ -580,8 +644,8 @@ neighborhoods.init = function() {
     } 
   });
 
-  /* removed show/hide feature
-
+  
+/*
   $(".show-hide").click(function(){
   
     var elem = $(this),
