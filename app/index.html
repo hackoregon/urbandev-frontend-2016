@@ -45,11 +45,6 @@
     <div id="map"></div>
     <div id="sidebar">
         <div class="sidebar-header">
-           <!-- <div class="summary-container">
-                <div id="neighborhood-summary">23</div>
-                <div class="summary-label">Total Neighborhoods</div>
-            </div>
-            -->
             <div class="hack-oregon-logo">
                 <img src="images/hack-oregon-logo.png">
             </div>
@@ -58,13 +53,14 @@
             <select id="neighborhood-dropdown"></select>
         </div>
         <div class="sidebar-body">
-            <!--<div class="data-section">                
-                <h2 class="data-section-heading">Neighborhood Overview</h2>
+            <div class="data-section">                
+                <h2 class="data-section-heading">Overview</h2>
                 <div class="data-body">
-                    <div id="graph-radar"
-                         class="graph-top-space"></div>
+                    <!--<div id="graph-radar"
+                         class="graph-top-space"></div>-->
+                    <table class="data-table" id="table-overview"></table>
                 </div>
-            </div>-->
+            </div>
             <div class="data-section">                
                 <h2 class="data-section-heading">Home Values</h2>
                 <div class="data-body">
@@ -74,6 +70,14 @@
                     <!--<div id="graph-zri" style="min-width: 310px; height: 300px; margin: 0 auto; margin-top:40px;"></div>-->
                 </div>
             </div>
+            <div class="data-section">                
+                <h2 class="data-section-heading">Rentability</h2>
+                <div class="data-body">
+                    <table class="data-table" id="table-rentability"></table>                    
+                    <div id="graph-home-value"
+                         class="graph-top-space"></div>
+                </div>
+            </div>            
             <div class="data-section">                
                 <h2 class="data-section-heading">Ethnicity</h2>                
                 <div class="data-body">

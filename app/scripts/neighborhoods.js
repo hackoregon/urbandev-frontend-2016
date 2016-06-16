@@ -142,8 +142,8 @@ neighborhoods.createTable = function( obj, elem ) {
   var keys = Object.keys(obj);
 
   for (var i = 0; i < keys.length; i++) {
-      var tr = "<tr>";
-      tr += "<td>" + keys[i] + "</td>" + "<td>" + (obj[keys[i]] ? obj[keys[i]] : '') + "</td></tr>";
+      var tr = '<tr>';
+      tr += '<td class="key">' + toTitleCase( keys[i].replace(/_/g,' ') ) + "</td>" + '<td class="value">' + (obj[keys[i]] ? obj[keys[i]] : '') + '</td></tr>';
       html += tr;
   }
 
@@ -470,14 +470,14 @@ neighborhoods.selectRegion = function( regionID ) {
     // update select2 dropdown (without triggering another change event)
     that.elems.neighborhoodDropdown.val(regionID).trigger('change.select2');
 
-    // trigger resize (to make sure map updates) ????
+    // trigger resize (to make sure map updates)
     google.maps.event.trigger(map, 'resize');
 
     // create object for summarized chart data
     d.highcharts = {};
 
-    // Sort Crime Types and Pre-Process 
-    if( d.Crime && d.Crime.Values && d.Crime.Values.length ){
+    // Sort Crime Types and Pre-Process and clean up names
+    if( d.Crime && d.Crime.Values && d.Crime.Values.length ) {
       
       var obj = d.Crime.Values[ d.Crime.Values.length - 1]; //grab latest crime
       var sortable = [];
@@ -503,6 +503,17 @@ neighborhoods.selectRegion = function( regionID ) {
     that.createPieChart('#graph-education', 'Education', d);
     that.createPieChart('#graph-crime', 'ViolentCrime', d);
     that.createPieChart('#graph-ethnicity', 'Race', d);
+
+    // 
+    var exampletableData = {
+      'population':'12592',
+      'home_value':'400000',
+      'crime_reports':'125',
+      'demolitions':'20'
+    };
+    that.createTable(exampletableData, $("#table-overview"));
+
+    //that.createTable(d.Crime.Values[i], $("#crime-types"));
 
     // populate census graphs?
     that.map.data.forEach(function(feature) {
