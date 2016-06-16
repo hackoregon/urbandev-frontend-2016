@@ -247,7 +247,7 @@ neighborhoods.createZillowGraphs = function( data ) {
             style: {
                 fontWeight: 'bold',
                 fontSize: '15px',
-                color: '#303030'
+                color: '#fff'
             }
         }        
     });
@@ -297,21 +297,31 @@ neighborhoods.createZillowGraphs = function( data ) {
                 }
             }        
         });
-
 };
 // Average Rental Prices Chart
 neighborhoods.createRentChart = function(data){
   
+  // hardcoded Overall portland rental data
+  var portlandData = [1000,1350,2000,4500];
+
   // Handle null data
+  if( !data.Craigslist || !data.Craigslist.Values ) {    
+    data.Craigslist = {
+      'Values' : {
+        'avg_price_studio' : null,
+        'avg_price_1_br': null,
+        'avg_price_2_br': null,
+        'avg_price_3_br': null
+      }
+    }
+    portlandData = [null, null, null, null];
+  }
 
   // Craigslist Rental data
   var neighborhoodData = [roundVal(data.Craigslist.Values.avg_price_studio),
                           roundVal(data.Craigslist.Values.avg_price_1_br),
                           roundVal(data.Craigslist.Values.avg_price_2_br),
                           roundVal(data.Craigslist.Values.avg_price_3_br)];
-
-  // hardcoded Overall portland rental data
-  var portlandData = [1000,1350,2000,4500];
 
   $('#graph-average-rent').highcharts({
         chart: {
