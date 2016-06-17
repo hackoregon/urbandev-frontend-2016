@@ -65,23 +65,21 @@ Highcharts.setOptions({
       '#FFC189',
       '#9d7ec9'
    ]
-
    */
    colors: [
-
     '#51A1E3',
-      '#E8DC3A',
-      '#E57900',      
-      '#1D4F0F', 
-      '#789310',                
-      '#515151',
-      '#C95C7C', // white ethnicity
-      '#AA370F',
-      '#3E4B6D',
-      '#ADCE4F',
-      '#E8CB71',
-      '#EAA475',
-      '#C66363'
+    '#E8DC3A',
+    '#E57900',      
+    '#1D4F0F', 
+    '#789310',                
+    '#515151',
+    '#C95C7C', // white ethnicity
+    '#AA370F',
+    '#3E4B6D',
+    '#ADCE4F',
+    '#E8CB71',
+    '#EAA475',
+    '#C66363'
    ]
 });
 
