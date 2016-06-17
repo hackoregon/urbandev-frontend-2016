@@ -642,7 +642,8 @@ neighborhoods.createPieChart = function( selector, keyName, data ) {
                   showInLegend: true,
                   startAngle: -90,
                   endAngle: 90,
-                  center: ['50%', '75%']
+                  center: ['50%', '75%'],
+                  borderWidth: 0
               }
           },
           series: [{
