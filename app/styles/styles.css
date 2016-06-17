@@ -182,6 +182,9 @@ _____________________________________________________________*/
     top: 0px;
     width: 40%;
     height: 100% !important;
+    /* smooth scrolling on iOS */
+    overflow-y: scroll; /* has to be scroll, not auto */
+    -webkit-overflow-scrolling: touch;    
 }
 
 .sidebar-header {
@@ -269,6 +272,10 @@ _____________________________________________________________*/
 
 /*TABLES
 _____________________________________________________________*/
+
+.data-table {
+    margin: 0px auto;
+}
 
 .data-table .key {        
     color:#4982b1;
