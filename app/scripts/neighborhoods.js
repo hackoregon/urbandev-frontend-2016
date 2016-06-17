@@ -211,7 +211,11 @@ neighborhoods.createGraph = function( data ) {
                 fontSize: '15px',
                 color: '#303030'
             }
-        }        
+        },
+        colors: [
+          '#418CC9',
+          '#E8DC3A'
+        ]     
     });
     $('#graph-zri').highcharts({
             chart: {
@@ -305,7 +309,11 @@ neighborhoods.createGraph = function( data ) {
               name: 'Actual Value',
               data: [37, 9, 24, 28],
               pointPlacement: 'on'
-          }]
+          }],
+          colors: [
+          '#418CC9',
+          '#E8DC3A'
+          ]   
       });
     $('#graph-ethnicity').highcharts({
         chart: {
@@ -405,7 +413,11 @@ neighborhoods.createGraph = function( data ) {
             name: 'Violent Crime',
             innerSize: '50%',
             data: data.VCrime
-        }]
+        }],
+        colors: [
+          '#418CC9',
+          '#E8DC3A'
+        ]   
     });
 
 };

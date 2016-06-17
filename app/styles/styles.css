@@ -322,9 +322,16 @@ _____________________________________________________________*/
 
 /*MODALS
 _____________________________________________________________*/
-
 .modal_text {
-    color: #f5f5f5;
+    color: white;
+}
+
+.modal_text a {
+    color: white;
+    font-size: 100px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .modal_close {
