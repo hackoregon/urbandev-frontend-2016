@@ -50,7 +50,8 @@ Highcharts.setOptions({
    ]
    */
    colors: [
-      '#7ec9ac',
+
+    '#7ec9ac',
       '#e06d5e',
       '#fcead5',      
       '#357573', 

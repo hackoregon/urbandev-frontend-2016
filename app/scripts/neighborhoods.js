@@ -236,8 +236,11 @@ neighborhoods.createZillowGraphs = function( data ) {
             name: 'Median Home Sold Price per sqft',      
             data: data.Zillow.MedianSold_sqft.Values,
             connectNulls: true
-        }
-        ],
+        }],
+        colors: [
+          '#418CC9',
+          '#E8DC3A'
+        ],        
         lang: {
             noData: "No Data",
             y: -50
@@ -301,8 +304,8 @@ neighborhoods.createZillowGraphs = function( data ) {
 // Average Rental Prices Chart
 neighborhoods.createRentChart = function(data){
   
-  // hardcoded Overall portland rental data
-  var portlandData = [1000,1350,2000,4500];
+  // hardcoded Overall portland rental data, pre-calculated
+  var portlandData = [1306.93,1488.47,1695.14,2150.53];
 
   // Handle null data
   if( !data.Craigslist || !data.Craigslist.Values ) {    
@@ -358,16 +361,20 @@ neighborhoods.createRentChart = function(data){
                     color: '#efefef'
                 }
             }            
-        },        
+        },     
+        tooltip: {
+          shared: true,
+          pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y}</b><br/>'
+        },           
         plotOptions: {
-            series: {
-                allowPointSelect: true
-            },
-            column: {
-        pointPadding: 0,
-        borderWidth: 0,
-        shadow: false,
-    }
+          series: {
+            allowPointSelect: true
+          },
+          column: {
+            pointPadding: 0,
+            borderWidth: 0,
+            shadow: false
+            }
         },
         series: [{
             name: data.RegionName,
@@ -382,6 +389,100 @@ neighborhoods.createRentChart = function(data){
             color: '#51A1e3',
             lineWidth: 3
          }]
+    });
+};
+
+// Create Income Chart
+neighborhoods.createIncomeChart = function(data){
+  
+  // Handle null data
+  if( !data.Income || !data.Income.Values ) {    
+    data.Income = {
+      "Values" : {
+        "total": null,
+        "income_100000_199999": null,
+        "income_75000_99999": null,
+        "income_200000_more": null,
+        "income_60000_74999": null,
+        "income_20000_29999": null,
+        "income_less_10000": null,
+        "income_40000_49999": null,
+        "income_50000_59999": null,
+        "income_30000_39999": null,
+        "income_10000_19999": null
+      }
+    };
+  }
+
+  // Craigslist Rental data
+  var incomeData = [
+    roundVal(data.Income.Values[1].income_less_10000),
+    roundVal(data.Income.Values[1].income_10000_19999),
+    roundVal(data.Income.Values[1].income_20000_29999),
+    roundVal(data.Income.Values[1].income_30000_39999),
+    roundVal(data.Income.Values[1].income_40000_49999),
+    roundVal(data.Income.Values[1].income_50000_59999),
+    roundVal(data.Income.Values[1].income_60000_74999),
+    roundVal(data.Income.Values[1].income_75000_99999),
+    roundVal(data.Income.Values[1].income_100000_199999),
+    roundVal(data.Income.Values[1].income_200000_more)
+  ];
+
+  $('#graph-income').highcharts({
+        chart: {
+            backgroundColor: '#343434',
+            type: 'column'
+        },
+        legend: {
+            itemStyle: {
+                color: '#efefef'
+            }
+          },
+        xAxis: {
+          labels:{
+            style: {
+                    color: '#efefef'
+                }
+            },
+            categories: ['<10k','10k-20k','20k-30k','30k-40k','40k-50k','50k-60k','60k-75k', '75k-100k','100k-199k','>200k'],
+            tickinterval: 0,
+
+        },
+       yAxis: {
+            title: {
+                enabled: false
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#efefef'
+            }],
+            labels: {
+                style: {
+                    color: '#efefef'
+                }
+            }            
+        },     
+        tooltip: {
+          shared: true,
+          pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y}</b><br/>'
+        },           
+        plotOptions: {
+          series: {
+            allowPointSelect: true
+          },
+          column: {
+            pointPadding: 0,
+            borderWidth: 0,
+            shadow: false
+            }
+        },
+        series: [{
+            name: data.RegionName,
+            data: incomeData,
+            color: '#E8DC3A',
+            lineWidth: 3
+        }]
     });
 };
 
@@ -587,31 +688,36 @@ neighborhoods.selectRegion = function( regionID ) {
 
     // populate graphs
     that.createZillowGraphs(d);
-    
     that.createPieChart('#graph-education', 'Education', d);
     that.createPieChart('#graph-crime', 'ViolentCrime', d);
-    that.createPieChart('#graph-ethnicity', 'Race', d);
-    
+    that.createPieChart('#graph-ethnicity', 'Race', d);    
     that.createRentChart(d);
+    that.createIncomeChart(d);
 
-    // 
-    var exampletableData = {
-      'population':'12592',
+    // Dummy data
+    var tableData = {
       'home_value':'400000',
+      'income':'0',
       'crime_reports':'125',
+      'violent_crime_reports':'125',
       'demolitions':'20'
     };
-    that.createTable(exampletableData, $("#table-overview"));
 
-    //that.createTable(d.Crime.Values[i], $("#crime-types"));
+    if( d.Income && d.Income.Values ) {
+      var iTotal= 0;
+      for( var i=0; i<d.Income.Values.length; i++) {
+        if(d.Income.Values[i]){dTotal+=d.Demolitions.Values[i];}
+      }
+    }
+    if( d.Demolitions && d.Demolitions.Values ) {
+      var dTotal= 0;
+      for( var i=0; i<d.Demolitions.Values.length; i++) {
+        if(d.Demolitions.Values[i]){dTotal+=d.Demolitions.Values[i];}
+      }
+    }    
 
-    // populate census graphs?
-    that.map.data.forEach(function(feature) {
-        //If you want, check here for some constraints.
-        //if( typeof feature.getProperty('NAMELSAD10') != 'undefined' ) {
-        //  that.map.data.remove(feature);
-        //}
-    });
+    tableData.demolitions = dTotal;
+    that.createTable(tableData, $("#table-overview"));
 
   };
 

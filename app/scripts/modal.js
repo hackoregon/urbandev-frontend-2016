@@ -41,9 +41,7 @@
 		'position':'absolute',
 		'right':'0',
 		'top':'5px',
-		'display':'block',
-		'height':'20px',
-		'width':'20px'	});
+		'display':'block'	});
 }
 
 	function add_popup_box(){
