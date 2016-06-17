@@ -331,12 +331,16 @@ neighborhoods.createRentChart = function(data){
             backgroundColor: '#343434',
             type: 'column'
         },
-
         legend: {
-              itemStyle: {
-                  color: '#efefef'
-              }
-            },     
+            itemStyle: {
+                color: 'white',                
+                fontSize: '16px'
+            },
+            itemHoverStyle: {
+              color: 'white',
+              fontWeight: 'bold'
+            }
+        },     
         xAxis: {
           labels:{
             style: {
@@ -364,7 +368,7 @@ neighborhoods.createRentChart = function(data){
         },     
         tooltip: {
           shared: true,
-          pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y}</b><br/>'
+          pointFormat: '<span>{series.name}: <b>${point.y}</b><br/>'
         },           
         plotOptions: {
           series: {
@@ -373,8 +377,13 @@ neighborhoods.createRentChart = function(data){
           column: {
             pointPadding: 0,
             borderWidth: 0,
-            shadow: false
+            shadow: false,
+            events: {
+              legendItemClick: function () {
+                  return false; 
+              }
             }
+          }
         },
         series: [{
             name: data.RegionName,
@@ -435,9 +444,14 @@ neighborhoods.createIncomeChart = function(data){
         },
         legend: {
             itemStyle: {
-                color: '#efefef'
-            }
-          },
+                color: 'white',                
+                fontSize: '16px'
+            },
+            itemHoverStyle: {
+              color: 'white',
+              fontWeight: 'bold'
+            }            
+        },
         xAxis: {
           labels:{
             style: {
@@ -465,7 +479,7 @@ neighborhoods.createIncomeChart = function(data){
         },     
         tooltip: {
           shared: true,
-          pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y}</b><br/>'
+          pointFormat: '<span>{series.name}: <b>${point.y}</b><br/>'
         },           
         plotOptions: {
           series: {
@@ -474,8 +488,13 @@ neighborhoods.createIncomeChart = function(data){
           column: {
             pointPadding: 0,
             borderWidth: 0,
-            shadow: false
+            shadow: false,
+            events: {
+              legendItemClick: function () {
+                  return false; 
+              }
             }
+          }
         },
         series: [{
             name: data.RegionName,
@@ -495,9 +514,14 @@ neighborhoods.createRadarChart = function( selector, keyName, data ) {
           type: 'line'
       },
       legend: {
-          itemStyle: {
-              color: 'white'
-          }
+            itemStyle: {
+                color: 'white',                
+                fontSize: '16px'
+            },
+            itemHoverStyle: {
+              color: 'white',
+              fontWeight: 'bold'
+            }            
       },
       title: {
           text: '',
@@ -661,6 +685,10 @@ neighborhoods.selectRegion = function( regionID ) {
     // trigger resize (to make sure map updates)
     google.maps.event.trigger(map, 'resize');
 
+    // update hover
+
+    that.elems.neighborhoodHover.text(that.neighborhoodsObject[regionID].Feature.H.NAME);
+
     // create object for summarized chart data
     d.highcharts = {};
 
@@ -696,12 +724,13 @@ neighborhoods.selectRegion = function( regionID ) {
 
     // Dummy data
     var tableData = {
-      'home_value':'400000',
-      'income':'0',
-      'crime_reports':'125',
-      'violent_crime_reports':'125',
-      'demolitions':'20'
+      'home_value':'18th of 83',
+      'average_rent':'24th of 83',
+      'income':'12th of 83',
+      'violent_crime':'55th of 83',
+      'demolitions':'56th(T) of 83'
     };
+
 
     if( d.Income && d.Income.Values ) {
       var iTotal= 0;

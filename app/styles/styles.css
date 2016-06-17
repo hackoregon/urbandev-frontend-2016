@@ -180,7 +180,7 @@ _____________________________________________________________*/
     position: absolute;
     right: 0;
     top: 0px;
-    width: 40% !important;
+    width: 40%;
     height: 100% !important;
 }
 
@@ -196,8 +196,9 @@ _____________________________________________________________*/
     color: white;
     font-family: 'Roboto Slab', monospace;
     font-size: 20px;
-    margin-bottom: 5px;
-    margin-top: 0;
+
+    margin-bottom: 7px;
+    margin-top: 1px;
     text-align: center;
 }
 
@@ -209,6 +210,7 @@ _____________________________________________________________*/
     right: 0;
     top: 130px;
     width: 100%;
+    overflow-x: hidden;
 }
 
 .data-section {
@@ -376,7 +378,15 @@ _____________________________________________________________*/
 _____________________________________________________________*/
 
 .modal_text {
-    color: #f5f5f5;
+    color: white;
+}
+
+.modal_text a {
+    color: white;
+    font-size: 100px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .modal_close {
@@ -397,3 +407,24 @@ _____________________________________________________________*/
     font-weight: bold;
     text-decoration: underline;
 }
+
+@media only screen and (max-width: 768px) {
+
+    header{
+        display:none;
+    }
+    table {
+        margin: 0px auto;
+    }
+    #sidebar {
+        width:100%;
+    }
+    #neighborhood-hover {
+        display:none;
+    }
+    #map {
+        display:none;
+    }
+}
+
+

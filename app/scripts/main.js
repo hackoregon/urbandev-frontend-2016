@@ -55,7 +55,7 @@ Highcharts.setOptions({
       '#e06d5e',
       '#fcead5',      
       '#357573', 
-      '#c9aa7e',                
+      '#c9aa7e',
       '#683E81',
       '#1d9fd3', // white ethnicity
       '#C18657',
