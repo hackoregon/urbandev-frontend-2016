@@ -1,13 +1,13 @@
 // Main
 
 // Utility Functions
-function roundVal(num) {    
+function roundVal(num) {
     return +(Math.round(num + "e+2")  + "e-2");
 }
 
 function sortByName(a, b){
   var aName = a.Name.toLowerCase();
-  var bName = b.Name.toLowerCase(); 
+  var bName = b.Name.toLowerCase();
   return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }
 
@@ -21,6 +21,27 @@ function registerNavModals(){
 }
 function toTitleCase(str){
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1)});
+}
+function formatRankData(obj){
+  if (obj.rank && obj.count) {
+    return ordinalSuffixOf(obj.rank) + ' of ' + obj.count;
+  } else {
+    return 'NA';
+  }
+}
+function ordinalSuffixOf(i) {
+  var j = i % 10,
+      k = i % 100;
+  if (j == 1 && k != 11) {
+    return i + "st";
+  }
+  if (j == 2 && k != 12) {
+    return i + "nd";
+  }
+  if (j == 3 && k != 13) {
+    return i + "rd";
+  }
+  return i + "th";
 }
 
 
@@ -53,8 +74,8 @@ Highcharts.setOptions({
 
     '#7ec9ac',
       '#e06d5e',
-      '#fcead5',      
-      '#357573', 
+      '#fcead5',
+      '#357573',
       '#c9aa7e',
       '#683E81',
       '#1d9fd3', // white ethnicity
@@ -69,9 +90,9 @@ Highcharts.setOptions({
    colors: [
     '#51A1E3',
     '#E8DC3A',
-    '#E57900',      
-    '#1D4F0F', 
-    '#789310',                
+    '#E57900',
+    '#1D4F0F',
+    '#789310',
     '#515151',
     '#C95C7C', // white ethnicity
     '#AA370F',
@@ -84,7 +105,7 @@ Highcharts.setOptions({
 });
 
 jQuery(document).ready(function($) {
-  neighborhoods.init();	
+  neighborhoods.init();
   registerNavModals();
 
   // For testing only
@@ -93,4 +114,3 @@ jQuery(document).ready(function($) {
   }, 800);
 
 });
-

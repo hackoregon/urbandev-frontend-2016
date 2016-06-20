@@ -20,32 +20,32 @@ var neighborhoods = {
     styles: [{"featureType":"all","elementType":"all","stylers":[{"lightness":"29"},{"invert_lightness":true},{"hue":"#008fff"},{"saturation":"-73"}]},{"featureType":"all","elementType":"labels","stylers":[{"saturation":"-72"}]},{"featureType":"administrative","elementType":"all","stylers":[{"lightness":"32"},{"weight":"0.42"},{"saturation":"0"}]},{"featureType":"administrative","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":"64"},{"saturation":"-45"},{"weight":"1.02"}]},{"featureType":"landscape","elementType":"all","stylers":[{"lightness":"-95"},{"gamma":"1.13"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"hue":"#006dff"},{"lightness":"4"},{"gamma":"1.44"},{"saturation":"-67"}]},{"featureType":"landscape","elementType":"geometry.stroke","stylers":[{"lightness":"5"}]},{"featureType":"landscape","elementType":"labels.text.fill","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"labels.text.fill","stylers":[{"weight":"0.84"},{"gamma":"0.5"}]},{"featureType":"poi","elementType":"labels.text.stroke","stylers":[{"visibility":"off"},{"weight":"0.79"},{"gamma":"0.5"}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"simplified"},{"lightness":"-78"},{"saturation":"-91"},{"color":"#1e1e1e"}]},{"featureType":"road","elementType":"labels.text","stylers":[{"color":"#ffffff"},{"lightness":"-49"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"lightness":"5"},{"color":"#bdb325"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"lightness":"10"},{"gamma":"1"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"lightness":"10"},{"saturation":"-100"}]},{"featureType":"transit","elementType":"all","stylers":[{"lightness":"-35"}]},{"featureType":"transit","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"saturation":"-97"},{"lightness":"-14"},{"color":"#000000"}]}],
     disableDefaultUI: true
   },
-  hoverStyle:{   
-    strokeColor: "#FFFFFF",  
-    fillOpacity: 0.6, 
+  hoverStyle:{
+    strokeColor: "#FFFFFF",
+    fillOpacity: 0.6,
     strokeWeight: 2,
     zIndex: 4
   },
-  disabledStyle : {    
+  disabledStyle : {
     strokeWeight: 1,
     strokeColor: "#979797",
-    fillOpacity: 0.15, 
+    fillOpacity: 0.15,
     fillColor: "#FFFFFF",
     zIndex: 2
   },
-  selectedStyle : {    
+  selectedStyle : {
     strokeWeight: 2,
     strokeColor: "#51A1e3",
-    fillOpacity: 0.0, 
+    fillOpacity: 0.0,
     fillColor: "#FFFFFF",
     zIndex: 5
   },
-  blockgroupStyle : {    
+  blockgroupStyle : {
     strokeWeight: 0.5,
-    fillOpacity: 0.9, 
+    fillOpacity: 0.9,
     fillColor: "red",
     zIndex: 1
-  } 
+  }
 };
 
 neighborhoods.createNeighborhoodsDropdown = function () {
@@ -77,18 +77,18 @@ neighborhoods.createNeighborhoodsDropdown = function () {
 neighborhoods.addDataPoint = function(e) {
 
   if(e.feature.getGeometry().getType()==='Polygon'){
-      
+
       // Create bounds rectangle to place datapoint properly
       var bounds=new google.maps.LatLngBounds();
-      e.feature.getGeometry().getArray().forEach(function(path){              
+      e.feature.getGeometry().getArray().forEach(function(path){
          path.getArray().forEach(function(latLng){bounds.extend(latLng);});
       });
       e.feature.setProperty('bounds',bounds);
-      
+
       // Push data object with feature data to array and object
       var dataObject = {
         "Name":e.feature.H.NAME,
-        "ID" : e.feature.H.REGIONID, 
+        "ID" : e.feature.H.REGIONID,
         "Center" : bounds.getCenter(),
         "Feature" : e.feature
       };
@@ -120,7 +120,7 @@ neighborhoods.addDataPoint = function(e) {
         pane: "mapPane",
         enableEventPropagation: true
       };
-      //var ib = new InfoBox(boxOptions);              
+      //var ib = new InfoBox(boxOptions);
       //ib.open(this.map);
     }
 };
@@ -143,7 +143,7 @@ neighborhoods.createTable = function( obj, elem ) {
 
   for (var i = 0; i < keys.length; i++) {
       var tr = '<tr>';
-      tr += '<td class="key">' + toTitleCase( keys[i].replace(/_/g,' ') ) + "</td>" + '<td class="value">' + (obj[keys[i]] ? obj[keys[i]] : '') + '</td></tr>';
+      tr += '<td class="key">' + toTitleCase( keys[i].replace(/_/g,' ') ) + "</td>" + '<td class="value">' + (obj[keys[i]] ? formatRankData(obj[keys[i]]) : '') + '</td></tr>';
       html += tr;
   }
 
@@ -152,14 +152,14 @@ neighborhoods.createTable = function( obj, elem ) {
 
 
 neighborhoods.createZillowGraphs = function( data ) {
-        
+
     if( !data.Zillow ) {
       data.Zillow = {};
       data.Zillow.MedianValue_sqft = {"Values":null,"Months":null};
       data.Zillow.MedianSold_sqft = {"Values":null,"Months":null};
       data.Zillow.ZRI_sqft = {"Values":null,"Months":null};
     }
-    
+
     if( !data.Zillow.MedianValue_sqft ) {
       data.Zillow.MedianValue_sqft = {"Values":null,"Months":null};
     }
@@ -193,14 +193,14 @@ neighborhoods.createZillowGraphs = function( data ) {
         },
         legend: {
             itemStyle: {
-                color: 'white',                
+                color: 'white',
                 fontSize: '16px'
             },
             itemHoverStyle: {
               color: 'white',
               fontWeight: 'bold'
-            }            
-        }, 
+            }
+        },
         title: {
             text: '',
             x: -20
@@ -226,21 +226,21 @@ neighborhoods.createZillowGraphs = function( data ) {
                 style: {
                     color: '#efefef'
                 }
-            }            
+            }
         },
         series: [{
-            name: 'Median Home Value per sqft',         
+            name: 'Median Home Value per sqft',
             data: data.Zillow.MedianValue_sqft.Values,
         },
         {
-            name: 'Median Home Sold Price per sqft',      
+            name: 'Median Home Sold Price per sqft',
             data: data.Zillow.MedianSold_sqft.Values,
             connectNulls: true
         }],
         colors: [
           '#418CC9',
           '#E8DC3A'
-        ],        
+        ],
         lang: {
             noData: "No Data",
             y: -50
@@ -252,9 +252,9 @@ neighborhoods.createZillowGraphs = function( data ) {
                 fontSize: '15px',
                 color: '#fff'
             }
-        }        
+        }
     });
-    
+
     $('#graph-zri').highcharts({
             chart: {
                 backgroundColor: '#343434',
@@ -264,7 +264,7 @@ neighborhoods.createZillowGraphs = function( data ) {
               itemStyle: {
                   color: 'white'
               }
-            },            
+            },
             title: {
                 text: '',
                 x: -20
@@ -283,7 +283,7 @@ neighborhoods.createZillowGraphs = function( data ) {
                 }]
             },
             series: [{
-                name: 'Zillow Rental Index',         
+                name: 'Zillow Rental Index',
                 data: data.Zillow.ZRI_sqft.Values,
             }
             ],
@@ -298,17 +298,17 @@ neighborhoods.createZillowGraphs = function( data ) {
                     fontSize: '15px',
                     color: '#303030'
                 }
-            }        
+            }
         });
 };
 // Average Rental Prices Chart
 neighborhoods.createRentChart = function(data){
-  
+
   // hardcoded Overall portland rental data, pre-calculated
   var portlandData = [1306.93,1488.47,1695.14,2150.53];
 
   // Handle null data
-  if( !data.Craigslist || !data.Craigslist.Values ) {    
+  if( !data.Craigslist || !data.Craigslist.Values ) {
     data.Craigslist = {
       'Values' : {
         'avg_price_studio' : null,
@@ -333,14 +333,14 @@ neighborhoods.createRentChart = function(data){
         },
         legend: {
             itemStyle: {
-                color: 'white',                
+                color: 'white',
                 fontSize: '16px'
             },
             itemHoverStyle: {
               color: 'white',
               fontWeight: 'bold'
             }
-        },     
+        },
         xAxis: {
           labels:{
             style: {
@@ -364,12 +364,12 @@ neighborhoods.createRentChart = function(data){
                 style: {
                     color: '#efefef'
                 }
-            }            
-        },     
+            }
+        },
         tooltip: {
           shared: true,
           pointFormat: '<span>{series.name}: <b>${point.y}</b><br/>'
-        },           
+        },
         plotOptions: {
           series: {
             allowPointSelect: true
@@ -380,7 +380,7 @@ neighborhoods.createRentChart = function(data){
             shadow: false,
             events: {
               legendItemClick: function () {
-                  return false; 
+                  return false;
               }
             }
           }
@@ -403,9 +403,9 @@ neighborhoods.createRentChart = function(data){
 
 // Create Income Chart
 neighborhoods.createIncomeChart = function(data){
-  
+
   // Handle null data
-  if( !data.Income || !data.Income.Values ) {    
+  if( !data.Income || !data.Income.Values ) {
     data.Income = {
       "Values" : {
         "total": null,
@@ -444,13 +444,13 @@ neighborhoods.createIncomeChart = function(data){
         },
         legend: {
             itemStyle: {
-                color: 'white',                
+                color: 'white',
                 fontSize: '16px'
             },
             itemHoverStyle: {
               color: 'white',
               fontWeight: 'bold'
-            }            
+            }
         },
         xAxis: {
           labels:{
@@ -475,12 +475,12 @@ neighborhoods.createIncomeChart = function(data){
                 style: {
                     color: '#efefef'
                 }
-            }            
-        },     
+            }
+        },
         tooltip: {
           shared: true,
           pointFormat: '<span>{series.name}: <b>${point.y}</b><br/>'
-        },           
+        },
         plotOptions: {
           series: {
             allowPointSelect: true
@@ -491,7 +491,7 @@ neighborhoods.createIncomeChart = function(data){
             shadow: false,
             events: {
               legendItemClick: function () {
-                  return false; 
+                  return false;
               }
             }
           }
@@ -515,13 +515,13 @@ neighborhoods.createRadarChart = function( selector, keyName, data ) {
       },
       legend: {
             itemStyle: {
-                color: 'white',                
+                color: 'white',
                 fontSize: '16px'
             },
             itemHoverStyle: {
               color: 'white',
               fontWeight: 'bold'
-            }            
+            }
       },
       title: {
           text: '',
@@ -567,10 +567,10 @@ neighborhoods.createRadarChart = function( selector, keyName, data ) {
 neighborhoods.createPieChart = function( selector, keyName, data ) {
 
     if( data[keyName] && data[keyName].Values) {
-      
+
       //for now just use latest time period
-      var d = data[keyName].Values[0]; 
-      var k = Object.keys(d);   
+      var d = data[keyName].Values[0];
+      var k = Object.keys(d);
       var v = [];
       for(var key in d) {
           v.push( d[key] );
@@ -579,7 +579,7 @@ neighborhoods.createPieChart = function( selector, keyName, data ) {
       data.highcharts[keyName] = [];
 
       for( var i=0; i < v.length; i++) {
-        
+
         if( k[i] == "total" ) continue;
 
         var elem = {
@@ -603,14 +603,14 @@ neighborhoods.createPieChart = function( selector, keyName, data ) {
           },
           legend: {
             itemStyle: {
-                color: 'white',                
+                color: 'white',
                 fontSize: '16px'
             },
             itemHoverStyle: {
               color: 'white',
               fontWeight: 'bold'
-            }            
-          },    
+            }
+          },
           title: {
               text: '',
               style: {
@@ -631,7 +631,7 @@ neighborhoods.createPieChart = function( selector, keyName, data ) {
                   dataLabels: {
                       allowPointSelect: true,
                       cursor: 'pointer',
-                      enabled: false,                  
+                      enabled: false,
                       distance: -50,
                       style: {
                           fontWeight: 'bold',
@@ -659,15 +659,15 @@ neighborhoods.createPieChart = function( selector, keyName, data ) {
 
 
 
-neighborhoods.selectRegion = function( regionID ) { 
+neighborhoods.selectRegion = function( regionID ) {
 
   var regionID = regionID + '', // make sure this is a string
       that = this,
       dataPath = "http://plot-pdx.s3-website-us-west-2.amazonaws.com/data/v1/" + regionID + ".json";
-      
+
   var updateView = function(d){
-    
-    that.map.data.forEach(function(ftr) { 
+
+    that.map.data.forEach(function(ftr) {
         ftr.setProperty('isSelected', false);
         if( ftr.getProperty('isSelected') ){
           //console.log(ftr);
@@ -676,7 +676,7 @@ neighborhoods.selectRegion = function( regionID ) {
 
     // select the feature
     that.neighborhoodsObject[regionID].Feature.setProperty('isSelected', true);
-    
+
     // pan to the Feature Region
     that.map.panTo(that.neighborhoodsObject[regionID].Center);
 
@@ -695,7 +695,7 @@ neighborhoods.selectRegion = function( regionID ) {
 
     // Sort Crime Types and Pre-Process and clean up names
     if( d.Crime && d.Crime.Values && d.Crime.Values.length ) {
-      
+
       var obj = d.Crime.Values[ d.Crime.Values.length - 1]; //grab latest crime
       var sortable = [];
       for (var item in obj){
@@ -719,18 +719,29 @@ neighborhoods.selectRegion = function( regionID ) {
     that.createZillowGraphs(d);
     that.createPieChart('#graph-education', 'Education', d);
     that.createPieChart('#graph-crime', 'ViolentCrime', d);
-    that.createPieChart('#graph-ethnicity', 'Race', d);    
+    that.createPieChart('#graph-ethnicity', 'Race', d);
     that.createRentChart(d);
     that.createIncomeChart(d);
 
-    // Dummy data
-    var tableData = {
-      'home_value':'18th of 83',
-      'average_rent':'24th of 83',
-      'income':'12th of 83',
-      'violent_crime':'55th of 83',
-      'demolitions':'56th(T) of 83'
-    };
+    // Overview datatable
+    if (d.Overview) {
+      var tableData = {};
+      if (d.Overview.MedianValue) {
+        tableData.home_value = d.Overview.MedianValue;
+      }
+      if (d.Overview.AvgRental) {
+        tableData.average_rent = d.Overview.AvgRental;
+      }
+      if (d.Overview.Violent) {
+        tableData.violent_crime = d.Overview.Violent;
+      }
+      if (d.Overview.Demolitions) {
+        tableData.demolitions = d.Overview.Demolitions;
+      }
+
+      that.createTable(tableData, $("#table-overview"));
+    }
+
 
 
     if( d.Income && d.Income.Values ) {
@@ -744,10 +755,10 @@ neighborhoods.selectRegion = function( regionID ) {
       for( var i=0; i<d.Demolitions.Values.length; i++) {
         if(d.Demolitions.Values[i]){dTotal+=d.Demolitions.Values[i];}
       }
-    }    
+    }
 
-    tableData.demolitions = dTotal;
-    that.createTable(tableData, $("#table-overview"));
+    //tableData.demolitions = dTotal;
+
 
   };
 
@@ -755,13 +766,13 @@ neighborhoods.selectRegion = function( regionID ) {
     dataType: 'json',
     url: dataPath,
     success: function (data) {
-      
+
       updateView(data);
-      
+
       // load blockgroups geojson ** we have disabled this feature!
       //if( typeof data.Blockgroups != 'undefined' && data.Blockgroups.length ) {
-      //  that.map.data.addGeoJson(data.Blockgroups[0]);  
-      //}      
+      //  that.map.data.addGeoJson(data.Blockgroups[0]);
+      //}
     },
     error: function (e) {
       console.log("error getting data");
@@ -798,29 +809,29 @@ neighborhoods.init = function() {
   });
 
   // set mouseover event for each feature (neighborhood)
-  this.map.data.addListener('mouseover', function(event) {    
+  this.map.data.addListener('mouseover', function(event) {
     if (!event.feature.getProperty('isSelected')){
       that.map.data.revertStyle();
-      that.map.data.overrideStyle(event.feature, that.hoverStyle);  
+      that.map.data.overrideStyle(event.feature, that.hoverStyle);
     }
     that.elems.neighborhoodHover.text(event.feature.H.NAME);
   });
 
   // set click event for each feature (neighborhood)
   this.map.data.addListener('click', function(event) {
-    
+
     if( typeof event.feature.getProperty('NAMELSAD10') != 'undefined' ) {
       event.feature.setProperty('isBlockgroup', true);
-    } 
+    }
     else {
-      that.selectRegion( event.feature.H.REGIONID );  
-    } 
+      that.selectRegion( event.feature.H.REGIONID );
+    }
   });
 
-  
+
 /*
   $(".show-hide").click(function(){
-  
+
     var elem = $(this),
         body = elem.parent().find(".data-body")
 
