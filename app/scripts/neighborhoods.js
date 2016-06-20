@@ -507,6 +507,23 @@ neighborhoods.createIncomeChart = function(data){
 
 neighborhoods.createRadarChart = function( selector, keyName, data ) {
 
+  // Overview data as radar chart
+  var radarData = {};
+  if (data[keyName]) {
+    if (data[keyName].MedianValue) {
+      radarData.home_value = data[keyName].MedianValue.rank;
+    }
+    if (data[keyName].AvgRental) {
+      radarData.average_rent = data[keyName].AvgRental.rank;
+    }
+    if (data[keyName].Violent) {
+      radarData.violent_crime = data[keyName].Violent.rank;
+    }
+    if (data[keyName].Demolitions) {
+      radarData.demolitions = data[keyName].Demolitions.rank;
+    }
+  }
+
   $('#graph-radar').highcharts({
       chart: {
           backgroundColor: '#343434',
@@ -531,7 +548,7 @@ neighborhoods.createRadarChart = function( selector, keyName, data ) {
           size: '80%'
       },
       xAxis: {
-          categories: ['Population', 'Home Value', 'Crime', 'Demolitions'],
+          categories: ['Home Value', 'Average Rent', ' Violent Crime', 'Demolitions'],
           tickmarkPlacement: 'on',
           lineWidth: 0
       },
@@ -544,7 +561,7 @@ neighborhoods.createRadarChart = function( selector, keyName, data ) {
 
       tooltip: {
           shared: true,
-          pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y} %</b><br/>'
+          pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y}</b><br/>'
       },
 
       legend: {
@@ -552,12 +569,8 @@ neighborhoods.createRadarChart = function( selector, keyName, data ) {
       },
 
       series: [{
-          name: 'Portland Average',
-          data: [23, 12, 65, 43],
-          pointPlacement: 'on'
-      }, {
-          name: 'Actual Value',
-          data: [37, 9, 24, 28],
+          name: 'Rank',
+          data: [radarData.home_value, radarData.average_rent, radarData.violent_crime, radarData.demolitions],
           pointPlacement: 'on'
       }]
   });
@@ -722,6 +735,8 @@ neighborhoods.selectRegion = function( regionID ) {
     that.createPieChart('#graph-ethnicity', 'Race', d);
     that.createRentChart(d);
     that.createIncomeChart(d);
+    // Optional radar chart with overview data
+    // that.createRadarChart('#graph-radar', 'Overview', d);
 
     // Overview datatable
     if (d.Overview) {
