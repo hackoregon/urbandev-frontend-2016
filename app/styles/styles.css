@@ -155,7 +155,8 @@ _____________________________________________________________*/
 }
 
 .hack-oregon-logo img {
-    width: 90px;
+    width: 120px;
+    margin-bottom: 3px;
 }
 
 #neighborhood-hover {
@@ -170,7 +171,7 @@ _____________________________________________________________*/
     position: absolute;
     text-align: center;
     width: 170px;
-    z-index: 1000;
+    z-index: 10;
 }
 
 #sidebar {
@@ -384,25 +385,46 @@ _____________________________________________________________*/
 _____________________________________________________________*/
 
 .modal_text {
-    color: white;
-}
-
-.modal_text a {
-    color: white;
-    font-size: 100px;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+   color: #f5f5f5 ;
+   width: 400px;
+   position: relative;
+   top: 40%;
+   transform: translate(0,-50%);
+   display: block;
+   margin: 0 auto;
+   text-align: center;
 }
 
 .modal_close {
-    color: #f5f5f5;
-    font-size: 50px;
-    position: absolute;
-    right: 50px !important;
-    text-decoration: none;
-    top: 30px !important;
+   color: #f5f5f5;
+   font-size: 50px;
+   position: absolute;
+   right: 50px !important;
+   text-decoration: none;
+   top: 30px !important;
+   transition: opacity .5s ease-in-out;
 }
+
+.modal_close:hover {
+   opacity: .6;
+}
+
+.modal_text a {
+   color: white;
+   font-size: 100px;
+   padding: 0px 30px;
+   transition: opacity .5s ease-in-out;
+}
+
+.modal_text a:hover {
+   opacity: .6;
+}
+
+.modal_content {
+   height: 100%;
+   width: 100%;
+}
+
 
 /*BUTTON STYLES
 _____________________________________________________________*/

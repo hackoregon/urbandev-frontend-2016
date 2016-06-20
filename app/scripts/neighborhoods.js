@@ -550,7 +550,13 @@ neighborhoods.createRadarChart = function( selector, keyName, data ) {
       xAxis: {
           categories: ['Home Value', 'Average Rent', ' Violent Crime', 'Demolitions'],
           tickmarkPlacement: 'on',
-          lineWidth: 0
+          lineWidth: 0,
+          labels:{
+            style: {
+                    color: 'white',
+                    fontSize: '16px'
+                }
+            }
       },
 
       yAxis: {
@@ -736,7 +742,7 @@ neighborhoods.selectRegion = function( regionID ) {
     that.createRentChart(d);
     that.createIncomeChart(d);
     // Optional radar chart with overview data
-    // that.createRadarChart('#graph-radar', 'Overview', d);
+    that.createRadarChart('#graph-radar', 'Overview', d);
 
     // Overview datatable
     if (d.Overview) {
