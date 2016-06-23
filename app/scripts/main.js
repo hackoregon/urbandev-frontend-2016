@@ -43,7 +43,7 @@ function ordinalSuffixOf(i) {
   }
   return i + "th";
 }
-
+function _log(e){try{console.log(e)}catch(t){}}
 
 // Highcharts General Options
 Highcharts.setOptions({

@@ -76,7 +76,10 @@ neighborhoods.createNeighborhoodsDropdown = function () {
 
 neighborhoods.addDataPoint = function(e) {
 
-  if(e.feature.getGeometry().getType()==='Polygon'){
+  try{
+
+    //_log(e);
+    if(e.feature.getGeometry().getType()==='Polygon'){
 
       // Create bounds rectangle to place datapoint properly
       var bounds=new google.maps.LatLngBounds();
@@ -87,25 +90,25 @@ neighborhoods.addDataPoint = function(e) {
 
       // Push data object with feature data to array and object
       var dataObject = {
-        "Name":e.feature.H.NAME,
-        "ID" : e.feature.H.REGIONID,
+        "Name":e.feature.f.NAME,
+        "ID" : e.feature.f.REGIONID,
         "Center" : bounds.getCenter(),
         "Feature" : e.feature
       };
 
       neighborhoods.neighborhoodsArray.push(dataObject);
-      neighborhoods.neighborhoodsObject[e.feature.H.REGIONID] = dataObject;
+      neighborhoods.neighborhoodsObject[e.feature.f.REGIONID] = dataObject;
 
-      var labelText = e.feature.H.NAME;
+      var labelText = e.feature.f.NAME;
       var labelDiv = document.createElement("div");
       labelDiv.innerHTML = labelText;
       labelDiv.setAttribute("class", "shape-label");
-      labelDiv.setAttribute("id", "shape-" + e.feature.H.REGIONID);
+      labelDiv.setAttribute("id", "shape-" + e.feature.f.REGIONID);
       labelDiv.setAttribute("style", "color:#444;");
 
       var boxOptions = {
         content: labelDiv,
-        id : e.feature.H.REGIONID,
+        id : e.f.REGIONID,
         boxStyle: {
           border: "none",
           textAlign: "center",
@@ -123,6 +126,12 @@ neighborhoods.addDataPoint = function(e) {
       //var ib = new InfoBox(boxOptions);
       //ib.open(this.map);
     }
+  }
+  catch(e){
+    _log("error");
+    _log(e);
+  }
+  
 };
 
 neighborhoods.resizeMap = function() {
@@ -689,11 +698,12 @@ neighborhoods.selectRegion = function( regionID ) {
     that.map.data.forEach(function(ftr) {
         ftr.setProperty('isSelected', false);
         if( ftr.getProperty('isSelected') ){
-          //console.log(ftr);
+          //_log(ftr);
         }
     });
 
     // select the feature
+    //_log( that.neighborhoodsObject[regionID] );
     that.neighborhoodsObject[regionID].Feature.setProperty('isSelected', true);
 
     // pan to the Feature Region
@@ -707,7 +717,7 @@ neighborhoods.selectRegion = function( regionID ) {
 
     // update hover
 
-    that.elems.neighborhoodHover.text(that.neighborhoodsObject[regionID].Feature.H.NAME);
+    that.elems.neighborhoodHover.text(that.neighborhoodsObject[regionID].Feature.f.NAME);
 
     // create object for summarized chart data
     d.highcharts = {};
@@ -796,7 +806,7 @@ neighborhoods.selectRegion = function( regionID ) {
       //}
     },
     error: function (e) {
-      console.log("error getting data");
+      _log("error getting data");
       updateView(null);
     }
   });
@@ -835,7 +845,7 @@ neighborhoods.init = function() {
       that.map.data.revertStyle();
       that.map.data.overrideStyle(event.feature, that.hoverStyle);
     }
-    that.elems.neighborhoodHover.text(event.feature.H.NAME);
+    that.elems.neighborhoodHover.text(event.feature.f.NAME);
   });
 
   // set click event for each feature (neighborhood)
@@ -845,7 +855,7 @@ neighborhoods.init = function() {
       event.feature.setProperty('isBlockgroup', true);
     }
     else {
-      that.selectRegion( event.feature.H.REGIONID );
+      that.selectRegion( event.feature.f.REGIONID );
     }
   });
 
